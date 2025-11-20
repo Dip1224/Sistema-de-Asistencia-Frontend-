@@ -1,8 +1,13 @@
-const DEFAULT_LOCAL_BASE =
-  typeof window !== "undefined" && window.location?.hostname
-    ? `${window.location.protocol}//${window.location.hostname}:3000`
-    : "http://localhost:3000";
+const DEPLOYED_BASE = "https://sistema-reconocimiento-backend.onrender.com";
 
-export const API_BASE_URL = (import.meta.env.VITE_API_BASE_URL || DEFAULT_LOCAL_BASE).trim();
+function resolveBaseUrl() {
+  if (import.meta.env.VITE_API_BASE_URL) {
+    return import.meta.env.VITE_API_BASE_URL;
+  }
+  // Por defecto usa el backend desplegado para evitar intentos a localhost en producción
+  return DEPLOYED_BASE;
+}
+
+export const API_BASE_URL = resolveBaseUrl().trim();
 
 export default API_BASE_URL;

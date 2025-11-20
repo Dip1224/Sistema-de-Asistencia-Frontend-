@@ -368,16 +368,13 @@ function TestEmployeeUpload() {
 
           <div className="camera-actions">
             <button type="button" onClick={() => startCamera()} disabled={isCameraBusy || isCameraActive}>
-              Reanudar camara
+              Iniciar camara
             </button>
             <button type="button" onClick={capturePhoto} disabled={!isCameraActive}>
-              Capturar foto
-            </button>
-            <button type="button" onClick={stopCamera} disabled={!isCameraActive}>
-              Detener camara
+              Tomar foto
             </button>
             <button type="button" onClick={handleDiscardClick} disabled={!capturedPreview && !fotoFile}>
-              Descartar foto
+              Limpiar foto
             </button>
           </div>
 
@@ -392,9 +389,6 @@ function TestEmployeeUpload() {
                 muted
                 style={isFrontCamera ? { transform: "scaleX(-1)" } : undefined}
               />
-              <button type="button" onClick={capturePhoto}>
-                Tomar foto ahora
-              </button>
             </div>
           )}
 

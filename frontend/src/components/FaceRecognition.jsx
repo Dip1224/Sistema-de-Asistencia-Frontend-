@@ -2,6 +2,7 @@
 import { getFaceModel } from "../lib/faceModel.js";
 import { acquireSharedCamera, releaseSharedCamera, buildCameraConstraints } from "../lib/sharedCamera.js";
 import API_BASE_URL from "../config/api.js";
+import { fetchBranches } from "../services/branches.js";
 
 const SAMPLE_COUNT = 3;
 const SAMPLE_DELAY_MS = 200;
@@ -21,12 +22,21 @@ function FaceRecognition() {
   const [cameraBusy, setCameraBusy] = useState(false);
   const [cameraError, setCameraError] = useState("");
   const [cameraFacing, setCameraFacing] = useState("front");
+  const [branches, setBranches] = useState([]);
+  const [selectedBranchId, setSelectedBranchId] = useState("");
+  const [geoChecking, setGeoChecking] = useState(false);
 
   useEffect(() => {
     mountedRef.current = true;
 
     async function bootstrap() {
       try {
+        const list = await fetchBranches().catch(() => []);
+        if (!mountedRef.current) return;
+        setBranches(list);
+        if (list.length === 1) {
+          setSelectedBranchId(list[0].id);
+        }
         await startCamera("front");
         if (!mountedRef.current) return;
         setStatus("Camara lista. Cargando modelo biometrico...");
@@ -172,6 +182,13 @@ function FaceRecognition() {
   async function identificar() {
     try {
       setLoading(true);
+      setStatus("Verificando ubicacion...");
+      const geoOk = await verificarGeocerca();
+      if (!geoOk) {
+        setLoading(false);
+        return;
+      }
+
       setStatus("Preparando captura...");
       const model = await getFaceModel();
       const payloadEmbeddings = [];
@@ -241,6 +258,61 @@ function FaceRecognition() {
     }
   }
 
+  async function verificarGeocerca() {
+    if (!selectedBranchId) {
+      setStatus("Selecciona una sucursal antes de verificar.");
+      return false;
+    }
+
+    if (!navigator?.geolocation) {
+      setStatus("Geolocalizacion no disponible en este navegador.");
+      return false;
+    }
+
+    setGeoChecking(true);
+
+    try {
+      const position = await new Promise((resolve, reject) => {
+        navigator.geolocation.getCurrentPosition(resolve, reject, {
+          enableHighAccuracy: true,
+          timeout: 10000
+        });
+      });
+
+      const { latitude, longitude } = position.coords;
+
+      const response = await fetch(`${API_BASE_URL}/api/checkins`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          lat: Number(latitude),
+          lng: Number(longitude),
+          branch_id: selectedBranchId
+        })
+      });
+
+      const data = await response.json().catch(() => ({}));
+
+      if (!response.ok) {
+        setStatus(data?.error || "No se pudo validar la geocerca.");
+        return false;
+      }
+
+      if (!data.inside) {
+        setStatus("No es posible realizar la verificacion: estas fuera de la zona permitida.");
+        return false;
+      }
+
+      return true;
+    } catch (err) {
+      console.error(err);
+      setStatus(err?.message || "No se pudo validar la geocerca.");
+      return false;
+    } finally {
+      setGeoChecking(false);
+    }
+  }
+
   const isFrontCamera = cameraFacing === "front";
 
   return (
@@ -252,6 +324,20 @@ function FaceRecognition() {
 
       <div className="recognition-video">
         <div className="camera-toolbar">
+          <label htmlFor="branchSelect">Sucursal</label>
+          <select
+            id="branchSelect"
+            value={selectedBranchId}
+            onChange={e => setSelectedBranchId(e.target.value)}
+            disabled={geoChecking || loading || cameraBusy}
+          >
+            <option value="">Selecciona una sucursal</option>
+            {branches.map(branch => (
+              <option key={branch.id} value={branch.id}>
+                {branch.name}
+              </option>
+            ))}
+          </select>
           <label htmlFor="cameraFacing">Camara</label>
           <select
             id="cameraFacing"
@@ -277,8 +363,8 @@ function FaceRecognition() {
 
       {cameraError && <p className="camera-error">{cameraError}</p>}
 
-      <button type="button" onClick={identificar} disabled={loading || cameraBusy}>
-        {loading ? "Procesando..." : "Identificar"}
+      <button type="button" onClick={identificar} disabled={loading || cameraBusy || geoChecking}>
+        {loading || geoChecking ? "Procesando..." : "Identificar"}
       </button>
 
       <pre className="recognition-status">{status}</pre>

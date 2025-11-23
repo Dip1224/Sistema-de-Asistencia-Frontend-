@@ -4,7 +4,6 @@ function resolveBaseUrl() {
   if (import.meta.env.VITE_API_BASE_URL) {
     return import.meta.env.VITE_API_BASE_URL;
   }
-  // Por defecto usa el backend desplegado para evitar intentos a localhost en producción
   return DEPLOYED_BASE;
 }
 

@@ -935,6 +935,29 @@ html.dark .locked-panel {
   gap: 0.5rem;
 }
 
+@media (max-width: 820px) {
+  .map-layout {
+    grid-template-columns: 1fr;
+  }
+
+  .map-view {
+    min-height: 360px;
+  }
+
+  .map-controls {
+    position: relative;
+    top: 0;
+  }
+
+  .map-buttons {
+    flex-direction: column;
+  }
+
+  .map-buttons button {
+    width: 100%;
+  }
+}
+
 .schedule-form {
   display: flex;
   flex-direction: column;

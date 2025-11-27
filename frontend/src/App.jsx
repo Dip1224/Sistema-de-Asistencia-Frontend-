@@ -10,6 +10,7 @@ import SmoothCursor from "./components/SmoothCursor.jsx";
 import { fetchZone, saveZone } from "./services/zone.js";
 import { fetchBranches, createBranch } from "./services/branches.js";
 import MapPicker from "./components/MapPicker.jsx";
+import EmployeeSchedule from "./components/EmployeeSchedule.jsx";
 
 const AUTH_STORAGE_KEY = "sr_auth_info";
 
@@ -58,6 +59,13 @@ function clearStoredAuth() {
   } catch (err) {
     console.error("No se pudo limpiar la sesion", err);
   }
+}
+
+function isAdminRole(auth) {
+  if (!auth) return false;
+  const roleName = auth.rol_nombre?.toLowerCase?.() || "";
+  const roleId = Number(auth.id_rol);
+  return roleName.includes("admin") || roleId === 1;
 }
 
 function HomePage({ onEnterApp, onLogin, onGoHome }) {
@@ -205,6 +213,7 @@ function App() {
   const originalFetchRef = useRef(window.fetch);
   const navigate = useNavigate();
 
+  const isAdmin = isAdminRole(authInfo);
   const isAuthenticated = Boolean(authInfo?.token) && !isTokenExpired(authInfo.token);
 
   const handleSessionExpired = useCallback(() => {
@@ -270,8 +279,10 @@ function App() {
   }, [sessionExpired]);
 
   useEffect(() => {
-    loadBranches();
-  }, []);
+    if (isAdmin) {
+      loadBranches();
+    }
+  }, [isAdmin]);
 
   useEffect(() => {
     if (!selectedBranchId) {
@@ -281,6 +292,18 @@ function App() {
     }
     loadZone(selectedBranchId);
   }, [selectedBranchId]);
+
+  useEffect(() => {
+    if (!isAuthenticated) {
+      setActiveView("home");
+      return;
+    }
+    const allowedViews = isAdmin ? ["register", "verify", "schedules", "map"] : ["verify", "mySchedules"];
+    const defaultView = isAdmin ? "register" : "verify";
+    if (!allowedViews.includes(activeView)) {
+      setActiveView(defaultView);
+    }
+  }, [isAuthenticated, isAdmin, activeView]);
 
   async function loadBranches() {
     setLoadingBranches(true);
@@ -489,6 +512,40 @@ function App() {
   }
 
   function renderActiveView() {
+    if (!isAdmin) {
+      if (activeView === "mySchedules") {
+        return (
+          <section className="employee-card">
+            <header className="employee-card__header">
+              <p className="register-subtitle">Mis horarios</p>
+              <h2>Tu jornada asignada</h2>
+              <p className="register-description">
+                Consulta los horarios configurados para ti y revisa tus datos de empleado.
+              </p>
+            </header>
+            <EmployeeSchedule
+              employeeId={authInfo?.id_empleado}
+              employeeName={[authInfo?.empleado_nombre, authInfo?.empleado_apellido].filter(Boolean).join(" ")}
+            />
+          </section>
+        );
+      }
+
+      return (
+        <section className="recognition-card">
+          <header className="register-header">
+            <p className="register-subtitle">Marcaci��n</p>
+            <h1>Verifica tu asistencia</h1>
+            <p className="register-description">
+              Ubica tu rostro dentro del recuadro y espera la confirmacion. Si estas dentro de la zona permitida se
+              registrara tu asistencia.
+            </p>
+          </header>
+          <FaceRecognition />
+        </section>
+      );
+    }
+
     if (activeView === "home") {
       return (
         <section className="home-screen">
@@ -744,35 +801,56 @@ function App() {
                   </button>
 
                   <nav className={`nav-menu ${menuOpen ? "open" : ""}`}>
-                  <button
-                    type="button"
-                    className={`menu-option ${activeView === "register" ? "active" : ""}`}
-                    onClick={() => handleMenuAction("register")}
-                  >
-                    Registrar
-                  </button>
-                  <button
-                    type="button"
-                    className={`menu-option ${activeView === "verify" ? "active" : ""}`}
-                      onClick={() => handleMenuAction("verify")}
-                    >
-                      Verificar
-                    </button>
-                    <button
-                      type="button"
-                      className={`menu-option ${activeView === "schedules" ? "active" : ""}`}
-                      onClick={() => handleMenuAction("schedules")}
-                    >
-                    Horarios
-                  </button>
-                  <button
-                    type="button"
-                    className={`menu-option ${activeView === "map" ? "active" : ""}`}
-                    onClick={() => handleMenuAction("map")}
-                  >
-                    Mapa
-                  </button>
-                </nav>
+                    {isAdmin ? (
+                      <>
+                        <button
+                          type="button"
+                          className={`menu-option ${activeView === "register" ? "active" : ""}`}
+                          onClick={() => handleMenuAction("register")}
+                        >
+                          Registrar
+                        </button>
+                        <button
+                          type="button"
+                          className={`menu-option ${activeView === "verify" ? "active" : ""}`}
+                          onClick={() => handleMenuAction("verify")}
+                        >
+                          Verificar
+                        </button>
+                        <button
+                          type="button"
+                          className={`menu-option ${activeView === "schedules" ? "active" : ""}`}
+                          onClick={() => handleMenuAction("schedules")}
+                        >
+                          Horarios
+                        </button>
+                        <button
+                          type="button"
+                          className={`menu-option ${activeView === "map" ? "active" : ""}`}
+                          onClick={() => handleMenuAction("map")}
+                        >
+                          Mapa
+                        </button>
+                      </>
+                    ) : (
+                      <>
+                        <button
+                          type="button"
+                          className={`menu-option ${activeView === "verify" ? "active" : ""}`}
+                          onClick={() => handleMenuAction("verify")}
+                        >
+                          Verificar
+                        </button>
+                        <button
+                          type="button"
+                          className={`menu-option ${activeView === "mySchedules" ? "active" : ""}`}
+                          onClick={() => handleMenuAction("mySchedules")}
+                        >
+                          Mis horarios
+                        </button>
+                      </>
+                    )}
+                  </nav>
 
                 <div className="nav-actions">
                   <AnimatedThemeToggler className="theme-toggle" aria-label="Cambiar tema" />

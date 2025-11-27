@@ -286,6 +286,28 @@ body {
   gap: 1rem;
 }
 
+.session-modal__title {
+  margin: 0;
+  font-size: 1.35rem;
+}
+
+.session-modal__body {
+  margin: 0;
+  color: #334155;
+  line-height: 1.5;
+}
+
+.session-modal__actions {
+  display: flex;
+  gap: 0.75rem;
+  justify-content: flex-end;
+  flex-wrap: wrap;
+}
+
+.session-modal__actions .primary-btn {
+  min-width: 190px;
+}
+
 .login-form {
   display: flex;
   flex-direction: column;
@@ -734,6 +756,10 @@ html.dark .modal {
   background: #0e0e0f;
   border-color: #1f1f1f;
   color: #e5e5e5;
+}
+
+html.dark .session-modal__body {
+  color: #e5e7eb;
 }
 
 html.dark .hero-video__thumb {

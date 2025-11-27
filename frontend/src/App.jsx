@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { Routes, Route, Navigate, useNavigate } from "react-router-dom";
 import TestEmployeeUpload from "./components/TestEmployeeUpload.jsx";
 import FaceRecognition from "./components/FaceRecognition.jsx";
@@ -10,6 +10,55 @@ import SmoothCursor from "./components/SmoothCursor.jsx";
 import { fetchZone, saveZone } from "./services/zone.js";
 import { fetchBranches, createBranch } from "./services/branches.js";
 import MapPicker from "./components/MapPicker.jsx";
+
+const AUTH_STORAGE_KEY = "sr_auth_info";
+
+function decodeTokenExpirationMs(token) {
+  if (!token || typeof token !== "string") return null;
+  const parts = token.split(".");
+  if (parts.length < 2) return null;
+
+  try {
+    const payload = JSON.parse(atob(parts[1]));
+    if (!payload?.exp) return null;
+    return payload.exp * 1000;
+  } catch (err) {
+    console.error("No se pudo decodificar el token", err);
+    return null;
+  }
+}
+
+function isTokenExpired(token) {
+  const expMs = decodeTokenExpirationMs(token);
+  if (!expMs) return false;
+  return Date.now() >= expMs;
+}
+
+function readStoredAuth() {
+  try {
+    const raw = localStorage.getItem(AUTH_STORAGE_KEY);
+    return raw ? JSON.parse(raw) : null;
+  } catch (err) {
+    console.error("No se pudo leer la sesion guardada", err);
+    return null;
+  }
+}
+
+function persistAuth(auth) {
+  try {
+    localStorage.setItem(AUTH_STORAGE_KEY, JSON.stringify(auth));
+  } catch (err) {
+    console.error("No se pudo guardar la sesion", err);
+  }
+}
+
+function clearStoredAuth() {
+  try {
+    localStorage.removeItem(AUTH_STORAGE_KEY);
+  } catch (err) {
+    console.error("No se pudo limpiar la sesion", err);
+  }
+}
 
 function HomePage({ onEnterApp, onLogin }) {
   return (
@@ -133,7 +182,17 @@ function App() {
   const [loginError, setLoginError] = useState("");
   const [loginLoading, setLoginLoading] = useState(false);
   const [credentials, setCredentials] = useState({ username: "", password: "" });
-  const [authInfo, setAuthInfo] = useState(null);
+  const [authInfo, setAuthInfo] = useState(() => {
+    const stored = readStoredAuth();
+    if (stored?.token && !isTokenExpired(stored.token)) {
+      return stored;
+    }
+    if (stored?.token) {
+      clearStoredAuth();
+    }
+    return null;
+  });
+  const [sessionExpired, setSessionExpired] = useState(false);
   const [zone, setZone] = useState({ center: { lat: 0, lng: 0 }, radius: 100, name: "" });
   const [zoneName, setZoneName] = useState("");
   const [branches, setBranches] = useState([]);
@@ -142,9 +201,73 @@ function App() {
   const [loadingBranches, setLoadingBranches] = useState(false);
   const [savingBranch, setSavingBranch] = useState(false);
   const [newBranch, setNewBranch] = useState({ name: "", address: "" });
+  const sessionHandledRef = useRef(false);
+  const originalFetchRef = useRef(window.fetch);
   const navigate = useNavigate();
 
-  const isAuthenticated = Boolean(authInfo);
+  const isAuthenticated = Boolean(authInfo?.token) && !isTokenExpired(authInfo.token);
+
+  const handleSessionExpired = useCallback(() => {
+    if (sessionHandledRef.current) return;
+    sessionHandledRef.current = true;
+    clearStoredAuth();
+    setAuthInfo(null);
+    setActiveView("home");
+    setSessionExpired(true);
+    navigate("/login");
+  }, [navigate]);
+
+  useEffect(() => {
+    if (!authInfo?.token) return undefined;
+    const expMs = decodeTokenExpirationMs(authInfo.token);
+    if (!expMs) return undefined;
+    const msLeft = expMs - Date.now();
+    if (msLeft <= 0) {
+      handleSessionExpired();
+      return undefined;
+    }
+    const timerId = setTimeout(() => handleSessionExpired(), msLeft);
+    return () => clearTimeout(timerId);
+  }, [authInfo, handleSessionExpired]);
+
+  useEffect(() => {
+    const originalFetch = originalFetchRef.current;
+
+    async function wrappedFetch(input, init = {}) {
+      const headers = new Headers(init.headers || {});
+      if (authInfo?.token) {
+        headers.set("Authorization", `Bearer ${authInfo.token}`);
+      }
+
+      const response = await originalFetch(input, { ...init, headers });
+      const isLoginRequest = typeof input === "string" && input.includes("/auth/login");
+      if (response.status === 401 && !isLoginRequest) {
+        handleSessionExpired();
+      }
+      return response;
+    }
+
+    window.fetch = wrappedFetch;
+    return () => {
+      window.fetch = originalFetch;
+    };
+  }, [authInfo, handleSessionExpired]);
+
+  useEffect(() => {
+    if (authInfo?.token) {
+      persistAuth(authInfo);
+      sessionHandledRef.current = false;
+      setSessionExpired(false);
+    } else {
+      clearStoredAuth();
+    }
+  }, [authInfo]);
+
+  useEffect(() => {
+    if (!sessionExpired) {
+      sessionHandledRef.current = false;
+    }
+  }, [sessionExpired]);
 
   useEffect(() => {
     loadBranches();
@@ -214,6 +337,9 @@ function App() {
   }
 
   function handleLogout() {
+    clearStoredAuth();
+    sessionHandledRef.current = false;
+    setSessionExpired(false);
     setAuthInfo(null);
     setActiveView("home");
     navigate("/");
@@ -351,6 +477,8 @@ function App() {
       }
 
       setAuthInfo(data);
+      sessionHandledRef.current = false;
+      setSessionExpired(false);
       setCredentials({ username: "", password: "" });
       navigate("/dashboard");
     } catch (err) {
@@ -564,6 +692,15 @@ function App() {
     );
   }
 
+  function handleSessionModalClose() {
+    clearStoredAuth();
+    setAuthInfo(null);
+    setActiveView("home");
+    sessionHandledRef.current = false;
+    setSessionExpired(false);
+    navigate("/login");
+  }
+
   return (
     <>
       <SmoothCursor />
@@ -653,6 +790,19 @@ function App() {
         />
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
+      {sessionExpired && (
+        <div className="modal-overlay">
+          <div className="modal">
+            <h3 className="session-modal__title">Tu sesion expiro</h3>
+            <p className="session-modal__body">Vuelve a iniciar sesion para seguir usando el panel.</p>
+            <div className="session-modal__actions">
+              <button type="button" className="primary-btn" onClick={handleSessionModalClose}>
+                Volver a iniciar sesion
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </>
   );
 }

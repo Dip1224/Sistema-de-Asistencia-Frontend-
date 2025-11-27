@@ -56,6 +56,7 @@ body {
   flex-direction: column;
   gap: 1.25rem;
   box-shadow: 0 20px 50px rgba(0, 0, 0, 0.35);
+  color: #f5f5f5;
 }
 
 .auth-hero h1 {
@@ -540,6 +541,7 @@ body {
 
 .home-video h3 {
   margin: 0;
+  color: #f5f5f5;
 }
 
 .home-video p {
@@ -758,6 +760,16 @@ html.dark .modal {
   color: #e5e5e5;
 }
 
+html.dark .map-card {
+  background: #0e0e0f;
+  border-color: #1f1f1f;
+  color: #e5e5e5;
+}
+
+html.dark .map-header h2 {
+  color: #f5f5f5;
+}
+
 html.dark .session-modal__body {
   color: #e5e7eb;
 }
@@ -780,6 +792,20 @@ html.dark .status {
   color: #d1d5db;
 }
 
+html.dark .map-subtitle,
+html.dark .map-description,
+html.dark .map-legend,
+html.dark .map-controls label,
+html.dark .map-buttons button,
+html.dark .schedule-summary,
+html.dark .schedule-hint {
+  color: #d1d5db;
+}
+
+html.dark .slider-value {
+  color: #cbd5e1;
+}
+
 html.dark .home-tile button {
   background: #f3f4f6;
   color: #0b0b0b;
@@ -794,6 +820,28 @@ html.dark .login-form input {
 
 html.dark .locked-panel {
   border-color: rgba(229, 231, 235, 0.12);
+}
+
+html.dark .map-controls {
+  background: #0b0b0b;
+  border-color: #1f1f1f;
+}
+
+html.dark .map-controls input,
+html.dark .map-controls select {
+  background: #0b0b0b;
+  border-color: #1f1f1f;
+  color: #e5e5e5;
+}
+
+html.dark .map-table,
+html.dark .schedule-table {
+  color: #e5e5e5;
+}
+
+html.dark .schedule-table th,
+html.dark .schedule-table td {
+  border-color: #1f1f1f;
 }
 
 .schedule-card {
@@ -1490,8 +1538,8 @@ html.dark .locked-panel {
     left: 1rem;
     right: 1rem;
     flex-direction: column;
-    background: #0e0e0f;
-    border: 1px solid #1f1f1f;
+    background: #ffffff;
+    border: 1px solid #e5e7eb;
     border-radius: 1rem;
     padding: 1rem;
     display: none;
@@ -1517,6 +1565,15 @@ html.dark .locked-panel {
 
   .nav-menu {
     gap: 0.5rem;
+  }
+
+  html.dark .nav-menu {
+    background: #0e0e0f;
+    border-color: #1f1f1f;
+  }
+
+  html.dark .menu-option {
+    color: #e5e5e5;
   }
 }
 

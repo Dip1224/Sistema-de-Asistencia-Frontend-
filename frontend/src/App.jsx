@@ -60,12 +60,12 @@ function clearStoredAuth() {
   }
 }
 
-function HomePage({ onEnterApp, onLogin }) {
+function HomePage({ onEnterApp, onLogin, onGoHome }) {
   return (
     <div className="home-shell">
       <header className="app-nav floating">
         <nav className="nav-menu open">
-          <button type="button" className="menu-option active" onClick={onEnterApp}>
+          <button type="button" className="menu-option active" onClick={onGoHome || onEnterApp}>
             Inicio
           </button>
         </nav>
@@ -709,6 +709,7 @@ function App() {
           path="/"
           element={
             <HomePage
+              onGoHome={() => navigate("/")}
               onEnterApp={() => (isAuthenticated ? navigate("/dashboard") : navigate("/login"))}
               onLogin={() => navigate("/login")}
             />

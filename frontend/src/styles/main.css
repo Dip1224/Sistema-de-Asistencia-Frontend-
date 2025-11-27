@@ -1506,9 +1506,11 @@ html.dark .schedule-table td {
   }
 
   .nav-actions {
-    width: 100%;
+    width: auto;
     justify-content: flex-end;
-    margin-left: 0;
+    align-items: center;
+    gap: 0.55rem;
+    margin-left: auto;
   }
 
   .workspace {
@@ -1545,9 +1547,39 @@ html.dark .schedule-table td {
     display: none;
   }
 
-  .nav-menu.open {
-    display: flex;
-  }
+.nav-menu.open {
+  display: flex;
+}
+
+/* Home header should stay inline on mobile */
+.home-shell .app-nav {
+  flex-wrap: nowrap;
+}
+
+.home-shell .nav-menu {
+  position: static;
+  display: flex !important;
+  flex-direction: row;
+  background: transparent;
+  border: none;
+  box-shadow: none;
+  padding: 0;
+  gap: 0.5rem;
+}
+
+.home-shell .menu-option {
+  background: #ffffff;
+  border: 1px solid #e5e7eb;
+  color: #0b0b0b;
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.06);
+}
+
+.home-shell .menu-option.active {
+  background: #0b0b0b;
+  color: #f5f5f5;
+  border-color: #0b0b0b;
+  box-shadow: 0 10px 18px rgba(0, 0, 0, 0.12);
+}
 
   .menu-option {
     width: 100%;
@@ -1574,6 +1606,21 @@ html.dark .schedule-table td {
 
   html.dark .menu-option {
     color: #e5e5e5;
+  }
+
+  /* Mantener el header de Home compacto en móvil */
+  .home-shell .app-nav {
+    flex-wrap: nowrap;
+    gap: 0.5rem;
+  }
+
+  .home-shell .nav-menu {
+    position: static;
+    flex-direction: row;
+    left: auto;
+    right: auto;
+    top: auto;
+    padding: 0;
   }
 }
 
@@ -1619,21 +1666,25 @@ html.dark .schedule-table td {
   .app-nav {
     margin: 0.75rem 0.75rem 0;
     padding: 0.7rem 0.85rem;
-  }
-
-  .nav-actions {
     gap: 0.5rem;
   }
 
+  .nav-actions {
+    gap: 0.45rem;
+  }
+
   .nav-actions .primary-btn {
-    width: 100%;
-    justify-content: center;
-    text-align: center;
+    padding: 0.55rem 1.1rem;
+    border-radius: 0.85rem;
+    font-weight: 700;
+    white-space: nowrap;
+    box-shadow: 0 8px 18px rgba(0, 0, 0, 0.12);
   }
 
   .theme-toggle {
-    width: 36px;
-    height: 36px;
+    width: 40px;
+    height: 40px;
+    border: 1px solid #d4d4d8;
   }
 
   .home-hero h1 {

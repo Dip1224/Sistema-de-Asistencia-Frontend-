@@ -64,7 +64,7 @@ function HomePage({ onEnterApp, onLogin }) {
   return (
     <div className="home-shell">
       <header className="app-nav floating">
-        <nav className="nav-menu">
+        <nav className="nav-menu open">
           <button type="button" className="menu-option active" onClick={onEnterApp}>
             Inicio
           </button>

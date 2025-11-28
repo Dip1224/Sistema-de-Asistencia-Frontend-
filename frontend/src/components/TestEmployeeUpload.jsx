@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import { enrollEmployeeFace } from "../services/enrollment.js";
 import { acquireSharedCamera, releaseSharedCamera, buildCameraConstraints } from "../lib/sharedCamera.js";
 import API_BASE_URL from "../config/api.js";
+import { fetchRoles } from "../services/roles.js";
 
 const CAMERA_OPTIONS = [
   { value: "front", label: "Camara frontal / selfie" },
@@ -16,6 +17,9 @@ function TestEmployeeUpload() {
   const [idDepartamento, setIdDepartamento] = useState("1");
   const [fechaIngreso, setFechaIngreso] = useState("");
   const [fotoFile, setFotoFile] = useState(null);
+  const [roles, setRoles] = useState([]);
+  const [idRol, setIdRol] = useState("");
+  const [loadingRoles, setLoadingRoles] = useState(false);
 
   const [status, setStatus] = useState("");
   const [errorMsg, setErrorMsg] = useState("");
@@ -58,6 +62,25 @@ function TestEmployeeUpload() {
       }
     };
   }, [capturedPreview]);
+
+  useEffect(() => {
+    async function loadRoles() {
+      try {
+        setLoadingRoles(true);
+        const list = await fetchRoles();
+        setRoles(list.filter(r => r.id_rol));
+        if (list.length && !idRol) {
+          setIdRol(String(list[0].id_rol));
+        }
+      } catch (err) {
+        console.error("No se pudieron cargar los roles", err);
+        setRoles([]);
+      } finally {
+        setLoadingRoles(false);
+      }
+    }
+    loadRoles();
+  }, [idRol]);
 
   function stopCamera() {
     if (videoRef.current) {
@@ -234,6 +257,9 @@ function TestEmployeeUpload() {
       formData.append("nombre", nombre);
       formData.append("apellido", apellido);
       formData.append("cargo", cargo);
+      if (idRol) {
+        formData.append("id_rol", idRol);
+      }
       formData.append("id_departamento", idDepartamento);
       formData.append("fecha_ingreso", fechaIngreso);
       formData.append("foto", fotoFile);
@@ -330,6 +356,17 @@ function TestEmployeeUpload() {
           onChange={e => setCargo(e.target.value)}
           required
         />
+        <label>
+          Rol
+          <select value={idRol} onChange={e => setIdRol(e.target.value)} disabled={loadingRoles}>
+            <option value="">{loadingRoles ? "Cargando roles..." : "Selecciona un rol"}</option>
+            {roles.map(role => (
+              <option key={role.id_rol} value={role.id_rol}>
+                {role.id_rol} - {role.nombre}
+              </option>
+            ))}
+          </select>
+        </label>
         <input
           type="number"
           min="1"

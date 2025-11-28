@@ -19,6 +19,8 @@ function TestEmployeeUpload() {
   const [fotoFile, setFotoFile] = useState(null);
   const [roles, setRoles] = useState([]);
   const [idRol, setIdRol] = useState("");
+  const [username, setUsername] = useState("");
+  const [userPassword, setUserPassword] = useState("");
   const [loadingRoles, setLoadingRoles] = useState(false);
 
   const [status, setStatus] = useState("");
@@ -257,6 +259,8 @@ function TestEmployeeUpload() {
       formData.append("nombre", nombre);
       formData.append("apellido", apellido);
       formData.append("cargo", cargo);
+      formData.append("username", username);
+      formData.append("password", userPassword);
       if (idRol) {
         formData.append("id_rol", idRol);
       }
@@ -319,6 +323,8 @@ function TestEmployeeUpload() {
       setNombre("");
       setApellido("");
       setCargo("");
+      setUsername("");
+      setUserPassword("");
       setIdDepartamento("1");
       setFechaIngreso("");
       discardCapture();
@@ -354,6 +360,20 @@ function TestEmployeeUpload() {
           placeholder="Cargo"
           value={cargo}
           onChange={e => setCargo(e.target.value)}
+          required
+        />
+        <input
+          type="text"
+          placeholder="Usuario para el panel"
+          value={username}
+          onChange={e => setUsername(e.target.value)}
+          required
+        />
+        <input
+          type="password"
+          placeholder="Contrasena para el panel"
+          value={userPassword}
+          onChange={e => setUserPassword(e.target.value)}
           required
         />
         <label>

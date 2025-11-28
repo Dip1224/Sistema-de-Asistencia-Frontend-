@@ -20,7 +20,8 @@ function TestEmployeeUpload() {
   const [roles, setRoles] = useState([]);
   const [idRol, setIdRol] = useState("");
   const [username, setUsername] = useState("");
-  const [userPassword, setUserPassword] = useState("");
+  const [userPassword, setUserPassword] = useState("123");
+  const [usernameEdited, setUsernameEdited] = useState(false);
   const [loadingRoles, setLoadingRoles] = useState(false);
 
   const [status, setStatus] = useState("");
@@ -83,6 +84,17 @@ function TestEmployeeUpload() {
     }
     loadRoles();
   }, [idRol]);
+
+  useEffect(() => {
+    if (usernameEdited) return;
+    const base = `${nombre || ""}.${apellido || ""}`.trim().replace(/\s+/g, ".");
+    const normalized = base
+      .normalize("NFD")
+      .replace(/[\u0300-\u036f]/g, "")
+      .toLowerCase()
+      .replace(/[^a-z0-9._-]/g, "");
+    setUsername(normalized || "");
+  }, [nombre, apellido, usernameEdited]);
 
   function stopCamera() {
     if (videoRef.current) {
@@ -259,8 +271,12 @@ function TestEmployeeUpload() {
       formData.append("nombre", nombre);
       formData.append("apellido", apellido);
       formData.append("cargo", cargo);
-      formData.append("username", username);
-      formData.append("password", userPassword);
+      if (username) {
+        formData.append("username", username);
+      }
+      if (userPassword) {
+        formData.append("password", userPassword);
+      }
       if (idRol) {
         formData.append("id_rol", idRol);
       }
@@ -324,7 +340,8 @@ function TestEmployeeUpload() {
       setApellido("");
       setCargo("");
       setUsername("");
-      setUserPassword("");
+      setUserPassword("123");
+      setUsernameEdited(false);
       setIdDepartamento("1");
       setFechaIngreso("");
       discardCapture();
@@ -362,20 +379,27 @@ function TestEmployeeUpload() {
           onChange={e => setCargo(e.target.value)}
           required
         />
-        <input
-          type="text"
-          placeholder="Usuario para el panel"
-          value={username}
-          onChange={e => setUsername(e.target.value)}
-          required
-        />
-        <input
-          type="password"
-          placeholder="Contrasena para el panel"
-          value={userPassword}
-          onChange={e => setUserPassword(e.target.value)}
-          required
-        />
+        <label>
+          Usuario para el panel (se genera con nombre y apellido)
+          <input
+            type="text"
+            placeholder="Usuario para el panel"
+            value={username}
+            onChange={e => {
+              setUsername(e.target.value);
+              setUsernameEdited(true);
+            }}
+          />
+        </label>
+        <label>
+          Contrasena para el panel (por defecto 123)
+          <input
+            type="password"
+            placeholder="Contrasena para el panel"
+            value={userPassword}
+            onChange={e => setUserPassword(e.target.value)}
+          />
+        </label>
         <label>
           Rol
           <select value={idRol} onChange={e => setIdRol(e.target.value)} disabled={loadingRoles}>

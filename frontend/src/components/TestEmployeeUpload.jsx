@@ -3,10 +3,22 @@ import { enrollEmployeeFace } from "../services/enrollment.js";
 import { acquireSharedCamera, releaseSharedCamera, buildCameraConstraints } from "../lib/sharedCamera.js";
 import API_BASE_URL from "../config/api.js";
 import { fetchRoles } from "../services/roles.js";
+import { fetchDepartamentos } from "../services/departamentos.js";
 
 const CAMERA_OPTIONS = [
   { value: "front", label: "Camara frontal / selfie" },
   { value: "back", label: "Camara trasera" }
+];
+
+const CARGO_OPTIONS = [
+  "Jefe de Red",
+  "Jefe de Marketing",
+  "Sistemas Internos",
+  "Configuracion Interna",
+  "Soporte Tecnico",
+  "Operaciones",
+  "Ventas",
+  "Administracion"
 ];
 
 function TestEmployeeUpload() {
@@ -23,6 +35,8 @@ function TestEmployeeUpload() {
   const [userPassword, setUserPassword] = useState("123");
   const [usernameEdited, setUsernameEdited] = useState(false);
   const [loadingRoles, setLoadingRoles] = useState(false);
+  const [departamentos, setDepartamentos] = useState([]);
+  const [loadingDepartamentos, setLoadingDepartamentos] = useState(false);
 
   const [status, setStatus] = useState("");
   const [errorMsg, setErrorMsg] = useState("");
@@ -84,6 +98,25 @@ function TestEmployeeUpload() {
     }
     loadRoles();
   }, [idRol]);
+
+  useEffect(() => {
+    async function loadDepartamentos() {
+      try {
+        setLoadingDepartamentos(true);
+        const list = await fetchDepartamentos();
+        setDepartamentos(list.filter(d => d.id_departamento));
+        if (list.length && !idDepartamento) {
+          setIdDepartamento(String(list[0].id_departamento));
+        }
+      } catch (err) {
+        console.error("No se pudieron cargar los departamentos", err);
+        setDepartamentos([]);
+      } finally {
+        setLoadingDepartamentos(false);
+      }
+    }
+    loadDepartamentos();
+  }, [idDepartamento]);
 
   useEffect(() => {
     if (usernameEdited) return;
@@ -374,11 +407,20 @@ function TestEmployeeUpload() {
         />
         <input
           type="text"
-          placeholder="Cargo"
-          value={cargo}
-          onChange={e => setCargo(e.target.value)}
-          required
+          style={{ display: "none" }}
+          aria-hidden="true"
         />
+        <label>
+          Cargo
+          <select value={cargo} onChange={e => setCargo(e.target.value)} required>
+            <option value="">Selecciona un cargo</option>
+            {CARGO_OPTIONS.map(option => (
+              <option key={option} value={option}>
+                {option}
+              </option>
+            ))}
+          </select>
+        </label>
         <label>
           Usuario para el panel (se genera con nombre y apellido)
           <input
@@ -412,13 +454,26 @@ function TestEmployeeUpload() {
           </select>
         </label>
         <input
-          type="number"
-          min="1"
-          placeholder="ID Departamento"
-          value={idDepartamento}
-          onChange={e => setIdDepartamento(e.target.value)}
-          required
+          type="text"
+          style={{ display: "none" }}
+          aria-hidden="true"
         />
+        <label>
+          Departamento
+          <select
+            value={idDepartamento}
+            onChange={e => setIdDepartamento(e.target.value)}
+            disabled={loadingDepartamentos}
+            required
+          >
+            <option value="">{loadingDepartamentos ? "Cargando departamentos..." : "Selecciona un departamento"}</option>
+            {departamentos.map(dep => (
+              <option key={dep.id_departamento} value={dep.id_departamento}>
+                {dep.id_departamento} - {dep.nombre}
+              </option>
+            ))}
+          </select>
+        </label>
         <input
           type="date"
           value={fechaIngreso}

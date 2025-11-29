@@ -1206,6 +1206,74 @@ html.dark .map-controls .ghost-button {
   color: #475569;
 }
 
+/* Logs */
+.logs-card {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding: 16px;
+  background: var(--panel-bg);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+}
+
+.logs-table {
+  display: grid;
+  gap: 8px;
+}
+
+.logs-header,
+.logs-row {
+  display: grid;
+  grid-template-columns: 1.2fr 0.8fr 0.6fr 0.8fr 0.8fr 2fr;
+  gap: 8px;
+  align-items: center;
+  padding: 10px 12px;
+}
+
+.logs-header {
+  font-weight: 600;
+  background: var(--panel-strong);
+  border-radius: 8px;
+}
+
+.logs-row {
+  background: var(--panel-muted);
+  border-radius: 8px;
+}
+
+.logs-detail {
+  color: var(--muted-strong);
+  font-size: 0.95rem;
+}
+
+.log-pill {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 4px 8px;
+  border-radius: 999px;
+  font-weight: 600;
+  font-size: 0.85rem;
+  text-transform: uppercase;
+  letter-spacing: 0.01em;
+}
+
+.log-pill.success {
+  background: rgba(46, 204, 113, 0.15);
+  color: #2ecc71;
+}
+
+.log-pill.warning {
+  background: rgba(241, 196, 15, 0.2);
+  color: #f39c12;
+}
+
+.log-pill.danger {
+  background: rgba(231, 76, 60, 0.2);
+  color: #e74c3c;
+}
+
 .ghost-button--danger {
   border-color: #fecdd3;
   color: #be123c;

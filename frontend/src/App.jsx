@@ -11,6 +11,7 @@ import { fetchZone, saveZone } from "./services/zone.js";
 import { fetchBranches, createBranch } from "./services/branches.js";
 import MapPicker from "./components/MapPicker.jsx";
 import EmployeeSchedule from "./components/EmployeeSchedule.jsx";
+import EmployeeLogs from "./components/EmployeeLogs.jsx";
 
 const AUTH_STORAGE_KEY = "sr_auth_info";
 
@@ -298,7 +299,7 @@ function App() {
       setActiveView("home");
       return;
     }
-    const allowedViews = isAdmin ? ["register", "verify", "schedules", "map"] : ["verify", "mySchedules"];
+    const allowedViews = isAdmin ? ["register", "verify", "schedules", "map", "logs"] : ["verify", "mySchedules"];
     const defaultView = isAdmin ? "register" : "verify";
     if (!allowedViews.includes(activeView)) {
       setActiveView(defaultView);
@@ -715,6 +716,10 @@ function App() {
       );
     }
 
+    if (activeView === "logs") {
+      return <EmployeeLogs />;
+    }
+
     if (activeView === "register") {
       return (
         <section className="register-card">
@@ -830,6 +835,13 @@ function App() {
                           onClick={() => handleMenuAction("map")}
                         >
                           Mapa
+                        </button>
+                        <button
+                          type="button"
+                          className={`menu-option ${activeView === "logs" ? "active" : ""}`}
+                          onClick={() => handleMenuAction("logs")}
+                        >
+                          Historial
                         </button>
                       </>
                     ) : (

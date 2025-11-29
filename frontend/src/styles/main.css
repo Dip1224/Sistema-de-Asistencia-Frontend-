@@ -802,6 +802,60 @@ html.dark .schedule-hint {
   color: #d1d5db;
 }
 
+html.dark .simple-form label,
+html.dark .test-upload label {
+  color: #e5e5e5;
+}
+
+html.dark .simple-form input,
+html.dark .simple-form select,
+html.dark .test-upload input[type="text"],
+html.dark .test-upload input[type="number"],
+html.dark .test-upload input[type="date"],
+html.dark .test-upload input[type="file"],
+html.dark .test-upload select {
+  background: #0b0b0b;
+  color: #e5e5e5;
+  border-color: #1f1f1f;
+}
+
+html.dark .simple-form input::placeholder,
+html.dark .test-upload input::placeholder {
+  color: #9ca3af;
+}
+
+html.dark .simple-form button,
+html.dark .test-upload button[type="submit"],
+html.dark .schedule-form button[type="submit"] {
+  background: #f5f5f5;
+  color: #0b0b0b;
+  border: none;
+}
+
+html.dark .schedule-form {
+  background: #0b0b0b;
+  border-color: #1f1f1f;
+}
+
+html.dark .schedule-form input,
+html.dark .schedule-form select {
+  background: #0b0b0b;
+  color: #e5e5e5;
+  border-color: #1f1f1f;
+}
+
+html.dark .day-pill {
+  background: #0b0b0b;
+  border-color: #1f1f1f;
+  color: #e5e5e5;
+}
+
+html.dark .day-pill.active {
+  background: #f5f5f5;
+  border-color: #f5f5f5;
+  color: #0b0b0b;
+}
+
 html.dark .slider-value {
   color: #cbd5e1;
 }

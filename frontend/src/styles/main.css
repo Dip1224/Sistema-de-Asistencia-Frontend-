@@ -820,7 +820,8 @@ html.dark .test-upload select {
 }
 
 html.dark .simple-form input::placeholder,
-html.dark .test-upload input::placeholder {
+html.dark .test-upload input::placeholder,
+html.dark .schedule-form input::placeholder {
   color: #9ca3af;
 }
 

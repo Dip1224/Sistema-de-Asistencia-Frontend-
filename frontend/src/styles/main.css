@@ -841,6 +841,20 @@ html.dark .test-upload h2 {
   color: #f8fafc;
 }
 
+html.dark .test-upload {
+  background: transparent;
+  color: #f8fafc;
+}
+
+html.dark .simple-form {
+  background: transparent;
+}
+
+html.dark .simple-form label,
+html.dark .test-upload label {
+  color: #f8fafc !important;
+}
+
 html.dark .schedule-form {
   background: #0b0b0b;
   border-color: #1f1f1f;

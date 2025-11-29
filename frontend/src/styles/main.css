@@ -814,15 +814,15 @@ html.dark .test-upload input[type="number"],
 html.dark .test-upload input[type="date"],
 html.dark .test-upload input[type="file"],
 html.dark .test-upload select {
-  background: #0b0b0b;
-  color: #e5e5e5;
-  border-color: #1f1f1f;
+  background: #111827;
+  color: #f5f5f5;
+  border-color: #2a2f3b;
 }
 
 html.dark .simple-form input::placeholder,
 html.dark .test-upload input::placeholder,
 html.dark .schedule-form input::placeholder {
-  color: #9ca3af;
+  color: #cbd5e1;
 }
 
 html.dark .simple-form button,
@@ -833,6 +833,15 @@ html.dark .schedule-form button[type="submit"] {
   border: none;
 }
 
+html.dark .test-upload h2,
+html.dark .test-upload label {
+  color: #e5e5e5;
+}
+
+html.dark .test-upload__status {
+  border-color: #1f2937;
+}
+
 html.dark .schedule-form {
   background: #0b0b0b;
   border-color: #1f1f1f;
@@ -840,15 +849,15 @@ html.dark .schedule-form {
 
 html.dark .schedule-form input,
 html.dark .schedule-form select {
-  background: #0b0b0b;
-  color: #e5e5e5;
-  border-color: #1f1f1f;
+  background: #111827;
+  color: #f5f5f5;
+  border-color: #2a2f3b;
 }
 
 html.dark .day-pill {
-  background: #0b0b0b;
-  border-color: #1f1f1f;
-  color: #e5e5e5;
+  background: #111827;
+  border-color: #2a2f3b;
+  color: #f5f5f5;
 }
 
 html.dark .day-pill.active {

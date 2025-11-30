@@ -123,14 +123,32 @@ export default function EmployeeLogs() {
           {visibleLogs.length === 0 && <p className="schedule-hint">No hay eventos registrados.</p>}
           {visibleLogs.map(log => (
             <div key={log.id_log || `${log.id_empleado}-${log.fecha_evento}`} className="logs-row">
-              <span>{formatDate(log.fecha_evento)}</span>
-              <span>{log.id_empleado ?? "N/D"}</span>
-              <span>
-                <span className={eventClass(log.evento)}>{log.evento || "N/D"}</span>
-              </span>
-              <span>{log.usuario || "N/D"}</span>
-              <span>{log.ip || "N/D"}</span>
-              <span className="logs-detail">{log.data || "Sin detalle"}</span>
+              <div className="logs-field">
+                <span className="logs-label">Fecha</span>
+                <span className="logs-value">{formatDate(log.fecha_evento)}</span>
+              </div>
+              <div className="logs-field">
+                <span className="logs-label">Empleado</span>
+                <span className="logs-value">{log.id_empleado ?? "N/D"}</span>
+              </div>
+              <div className="logs-field">
+                <span className="logs-label">Evento</span>
+                <span className="logs-value">
+                  <span className={eventClass(log.evento)}>{log.evento || "N/D"}</span>
+                </span>
+              </div>
+              <div className="logs-field">
+                <span className="logs-label">Usuario DB</span>
+                <span className="logs-value">{log.usuario || "N/D"}</span>
+              </div>
+              <div className="logs-field">
+                <span className="logs-label">IP</span>
+                <span className="logs-value">{log.ip || "N/D"}</span>
+              </div>
+              <div className="logs-field">
+                <span className="logs-label">Detalle</span>
+                <span className="logs-value logs-detail">{log.data || "Sin detalle"}</span>
+              </div>
             </div>
           ))}
         </div>

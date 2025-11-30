@@ -12,6 +12,8 @@ import { fetchBranches, createBranch } from "./services/branches.js";
 import MapPicker from "./components/MapPicker.jsx";
 import EmployeeSchedule from "./components/EmployeeSchedule.jsx";
 import EmployeeLogs from "./components/EmployeeLogs.jsx";
+import VerifyIntro from "./components/VerifyIntro.jsx";
+import { TypingAnimation } from "./components/ui/typing-animation.jsx";
 
 const AUTH_STORAGE_KEY = "sr_auth_info";
 
@@ -91,19 +93,24 @@ function HomePage({ onEnterApp, onLogin, onGoHome }) {
           <div className="home-hero">
             <div className="hero-copy">
               <p className="eyebrow">Control de asistencia con biometria facial</p>
-              <h1>
-                Bienvenido al panel <span>Sistema de Reconocimiento</span>
+              <h1 className="hero-title">
+                <span className="typing-static">Bienvenido al panel</span>
+                <TypingAnimation
+                  words={[
+                    "Sistema de Reconocimiento",
+                    "Marca tu entrada en segundos",
+                    "Marca tu salida sin esperas"
+                  ]}
+                  loop
+                />
               </h1>
               <p className="hero-lead">
-                Registra empleados, captura plantillas faciales y gestiona horarios desde un solo lugar. Usa el menu
-                para acceder rapido a cada modulo.
+                Registra empleados, captura plantillas faciales, gestiona horarios y aplica geolocalizacion para las
+                marcaciones. Usa el menu para acceder rapido a cada modulo.
               </p>
               <div className="hero-actions">
                 <button type="button" className="primary" onClick={onEnterApp}>
-                  Ir al panel
-                </button>
-                <button type="button" className="ghost" onClick={onLogin}>
-                  Iniciar sesion
+                  Verificar asistencia
                 </button>
               </div>
             </div>
@@ -124,7 +131,7 @@ function HomePage({ onEnterApp, onLogin, onGoHome }) {
             <p>Reproduce un breve video de la experiencia de registro y verificación.</p>
             <HeroVideoDialog
               animationStyle="from-center"
-              videoSrc="https://www.youtube.com/embed/qh3NGpYRG3I?si=4rb-zSdDkVK9qxxb"
+              videoSrc="https://www.youtube.com/embed/bIVIEZNsa_I?si=bMn8WHcfcplVEpR6"
               thumbnailSrc="https://startup-template-sage.vercel.app/hero-light.png"
               darkThumbnailSrc="https://startup-template-sage.vercel.app/hero-dark.png"
               thumbnailAlt="Demo de reconocimiento"
@@ -389,6 +396,11 @@ function App() {
     );
   }
 
+  const handleVerifyEntryFlow = useCallback(() => {
+    setActiveView("verify");
+    navigate("/verify");
+  }, [navigate]);
+
   function handleRadiusChange(val) {
     const next = Number(val);
     if (!Number.isFinite(next)) return;
@@ -534,14 +546,7 @@ function App() {
 
       return (
         <section className="recognition-card">
-          <header className="register-header">
-            <p className="register-subtitle">Marcaci��n</p>
-            <h1>Verifica tu asistencia</h1>
-            <p className="register-description">
-              Ubica tu rostro dentro del recuadro y espera la confirmacion. Si estas dentro de la zona permitida se
-              registrara tu asistencia.
-            </p>
-          </header>
+          <VerifyIntro />
           <FaceRecognition />
         </section>
       );
@@ -553,12 +558,20 @@ function App() {
           <div className="home-hero">
             <div className="hero-copy">
               <p className="eyebrow">Control de asistencia con biometria facial</p>
-              <h1>
-                Bienvenido al panel <span>Sistema de Reconocimiento</span>
+              <h1 className="hero-title">
+                <span className="typing-static">Bienvenido al panel</span>
+                <TypingAnimation
+                  words={[
+                    "Sistema de Reconocimiento",
+                    "Marca tu entrada en segundos",
+                    "Marca tu salida sin esperas"
+                  ]}
+                  loop
+                />
               </h1>
               <p className="hero-lead">
-                Registra empleados, captura plantillas faciales y gestiona horarios desde un solo lugar. Usa el menu
-                para acceder rapido a cada modulo.
+                Registra empleados, captura plantillas faciales, gestiona horarios y aplica geolocalizacion para las
+                marcaciones. Usa el menu para acceder rapido a cada modulo.
               </p>
               <div className="hero-actions">
                 <button type="button" className="primary" onClick={() => handleSelectView("register")}>
@@ -742,6 +755,7 @@ function App() {
     if (activeView === "verify") {
       return (
         <section className="recognition-card">
+          <VerifyIntro />
           <FaceRecognition />
         </section>
       );
@@ -772,7 +786,7 @@ function App() {
           element={
             <HomePage
               onGoHome={() => navigate("/")}
-              onEnterApp={() => (isAuthenticated ? navigate("/dashboard") : navigate("/login"))}
+              onEnterApp={handleVerifyEntryFlow}
               onLogin={() => navigate("/login")}
             />
           }
@@ -791,6 +805,19 @@ function App() {
                 loginLoading={loginLoading}
               />
             )
+          }
+        />
+        <Route
+          path="/verify"
+          element={
+            <div className="app-shell">
+              <main className="workspace">
+                <section className="recognition-card">
+                  <VerifyIntro />
+                  <FaceRecognition />
+                </section>
+              </main>
+            </div>
           }
         />
         <Route

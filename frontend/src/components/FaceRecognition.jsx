@@ -3,6 +3,7 @@ import { getFaceModel } from "../lib/faceModel.js";
 import { acquireSharedCamera, releaseSharedCamera, buildCameraConstraints } from "../lib/sharedCamera.js";
 import API_BASE_URL from "../config/api.js";
 import { fetchBranches } from "../services/branches.js";
+import { NativeSelect, NativeSelectOption } from "./ui/native-select.jsx";
 const SAMPLE_COUNT = 3;
 const SAMPLE_DELAY_MS = 200;
 const IDENTIFICATION_ROUNDS = 2;
@@ -315,40 +316,35 @@ function FaceRecognition() {
   const isFrontCamera = cameraFacing === "front";
   return (
     <div className="recognition-panel">
-      <div className="recognition-header">
-        <h2>Reconocimiento facial en vivo</h2>
-        <p>Usa la camara para marcar entrada o salida automaticamente.</p>
-      </div>
-
       <div className="recognition-video">
         <div className="camera-toolbar">
-          <label htmlFor="branchSelect">Sucursal</label>
-          <select
+          <NativeSelect
             id="branchSelect"
+            label="Sucursal"
             value={selectedBranchId}
             onChange={e => setSelectedBranchId(e.target.value)}
             disabled={geoChecking || loading || cameraBusy}
           >
-            <option value="">Selecciona una sucursal</option>
+            <NativeSelectOption value="">Selecciona una sucursal</NativeSelectOption>
             {branches.map(branch => (
-              <option key={branch.id} value={branch.id}>
+              <NativeSelectOption key={branch.id} value={branch.id}>
                 {branch.name}
-              </option>
+              </NativeSelectOption>
             ))}
-          </select>
-          <label htmlFor="cameraFacing">Camara</label>
-          <select
+          </NativeSelect>
+          <NativeSelect
             id="cameraFacing"
+            label="Camara"
             value={cameraFacing}
             onChange={handleFacingChange}
             disabled={cameraBusy || loading}
           >
             {CAMERA_OPTIONS.map(option => (
-              <option key={option.value} value={option.value}>
+              <NativeSelectOption key={option.value} value={option.value}>
                 {option.label}
-              </option>
+              </NativeSelectOption>
             ))}
-          </select>
+          </NativeSelect>
         </div>
         <video
           ref={videoRef}

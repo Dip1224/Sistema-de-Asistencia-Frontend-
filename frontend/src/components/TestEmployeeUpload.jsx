@@ -4,6 +4,7 @@ import { acquireSharedCamera, releaseSharedCamera, buildCameraConstraints } from
 import API_BASE_URL from "../config/api.js";
 import { fetchRoles } from "../services/roles.js";
 import { fetchDepartamentos } from "../services/departamentos.js";
+import { FileUpload } from "./ui/file-upload.jsx";
 
 const CAMERA_OPTIONS = [
   { value: "front", label: "Camara frontal / selfie" },
@@ -28,6 +29,12 @@ function TestEmployeeUpload() {
   const [cargo, setCargo] = useState("");
   const [idDepartamento, setIdDepartamento] = useState("1");
   const [fechaIngreso, setFechaIngreso] = useState("");
+  const [showDatePicker, setShowDatePicker] = useState(false);
+  const [calendarMonth, setCalendarMonth] = useState(() => {
+    const base = new Date();
+    return new Date(base.getFullYear(), base.getMonth(), 1);
+  });
+  const [uploadingFile, setUploadingFile] = useState(null);
   const [fotoFile, setFotoFile] = useState(null);
   const [roles, setRoles] = useState([]);
   const [idRol, setIdRol] = useState("");
@@ -205,22 +212,22 @@ function TestEmployeeUpload() {
     }
   }
 
-  function handleFileChange(event) {
-    const file = event.target.files?.[0] || null;
-
+  function setFileFromUpload(file) {
     if (capturedPreview) {
       URL.revokeObjectURL(capturedPreview);
-      setCapturedPreview("");
     }
-
-    setFotoFile(file);
-    setStatus("");
-    setErrorMsg("");
-    setCameraError("");
-
     if (file) {
       const previewUrl = URL.createObjectURL(file);
       setCapturedPreview(previewUrl);
+      setFotoFile(file);
+      setStatus("Foto cargada desde archivo.");
+      setErrorMsg("");
+      setCameraError("");
+      setUploadingFile(file);
+    } else {
+      setCapturedPreview("");
+      setFotoFile(null);
+      setUploadingFile(null);
     }
   }
 
@@ -386,6 +393,75 @@ function TestEmployeeUpload() {
 
   const isFrontCamera = cameraFacing === "front";
 
+  function formatDateForDisplay(value) {
+    if (!value) return "";
+    const dateObj = new Date(value);
+    if (Number.isNaN(dateObj.getTime())) return value;
+    return dateObj.toLocaleDateString("es-ES", {
+      day: "2-digit",
+      month: "long",
+      year: "numeric"
+    });
+  }
+
+  function formatDateISO(dateObj) {
+    if (!(dateObj instanceof Date) || Number.isNaN(dateObj.getTime())) return "";
+    const y = dateObj.getFullYear();
+    const m = String(dateObj.getMonth() + 1).padStart(2, "0");
+    const d = String(dateObj.getDate()).padStart(2, "0");
+    return `${y}-${m}-${d}`;
+  }
+
+  function handleSelectDate(dateObj) {
+    const iso = formatDateISO(dateObj);
+    if (iso) {
+      setFechaIngreso(iso);
+    }
+    setShowDatePicker(false);
+  }
+
+  function handlePrevMonth() {
+    setCalendarMonth(prev => new Date(prev.getFullYear(), prev.getMonth() - 1, 1));
+  }
+
+  function handleNextMonth() {
+    setCalendarMonth(prev => new Date(prev.getFullYear(), prev.getMonth() + 1, 1));
+  }
+
+  function buildMonthDays(monthDate) {
+    const start = new Date(monthDate.getFullYear(), monthDate.getMonth(), 1);
+    const end = new Date(monthDate.getFullYear(), monthDate.getMonth() + 1, 0);
+    const startWeekday = (start.getDay() + 6) % 7; // lunes=0
+    const days = [];
+
+    for (let i = 0; i < startWeekday; i += 1) {
+      const d = new Date(start);
+      d.setDate(d.getDate() - (startWeekday - i));
+      days.push({ date: d, current: false });
+    }
+
+    for (let i = 1; i <= end.getDate(); i += 1) {
+      days.push({ date: new Date(monthDate.getFullYear(), monthDate.getMonth(), i), current: true });
+    }
+
+    while (days.length % 7 !== 0) {
+      const last = days[days.length - 1].date;
+      const d = new Date(last);
+      d.setDate(d.getDate() + 1);
+      days.push({ date: d, current: false });
+    }
+
+    return days;
+  }
+
+  useEffect(() => {
+    if (!fechaIngreso) return;
+    const parsed = new Date(fechaIngreso);
+    if (!Number.isNaN(parsed.getTime())) {
+      setCalendarMonth(new Date(parsed.getFullYear(), parsed.getMonth(), 1));
+    }
+  }, [fechaIngreso]);
+
   return (
     <section className="test-upload">
       <h2>Registrar empleado + plantilla facial</h2>
@@ -474,19 +550,67 @@ function TestEmployeeUpload() {
             ))}
           </select>
         </label>
-        <input
-          type="date"
-          value={fechaIngreso}
-          onChange={e => setFechaIngreso(e.target.value)}
-          required
-        />
-        <input
-          ref={fileInputRef}
-          type="file"
-          accept="image/*"
-          onChange={handleFileChange}
-          disabled={isCameraBusy}
-        />
+        <label>
+          Fecha de ingreso
+          <div className="date-field">
+            <input
+              type="text"
+              readOnly
+              className="date-display"
+              value={fechaIngreso ? formatDateForDisplay(fechaIngreso) : ""}
+              placeholder="Selecciona una fecha"
+              onClick={() => setShowDatePicker(prev => !prev)}
+            />
+            {showDatePicker && (
+              <div className="date-popover">
+                <div className="mini-calendar">
+                  <div className="mini-calendar__header">
+                    <button type="button" onClick={handlePrevMonth} aria-label="Mes anterior">
+                      ‹
+                    </button>
+                    <div className="mini-calendar__title">
+                      {calendarMonth.toLocaleDateString("es-ES", { month: "long", year: "numeric" })}
+                    </div>
+                    <button type="button" onClick={handleNextMonth} aria-label="Mes siguiente">
+                      ›
+                    </button>
+                  </div>
+                  <div className="mini-calendar__weekdays">
+                    {["Lu", "Ma", "Mi", "Ju", "Vi", "Sa", "Do"].map(d => (
+                      <span key={d}>{d}</span>
+                    ))}
+                  </div>
+                  <div className="mini-calendar__grid">
+                    {buildMonthDays(calendarMonth).map(item => {
+                      const iso = formatDateISO(item.date);
+                      const isSelected = fechaIngreso === iso;
+                      return (
+                        <button
+                          type="button"
+                          key={iso}
+                          className={`mini-calendar__day ${item.current ? "" : "is-out"} ${
+                            isSelected ? "is-selected" : ""
+                          }`}
+                          onClick={() => handleSelectDate(item.date)}
+                        >
+                          {item.date.getDate()}
+                        </button>
+                      );
+                    })}
+                  </div>
+                </div>
+              </div>
+            )}
+          </div>
+        </label>
+        <div className="upload-wrapper">
+          <FileUpload
+            onChange={fileList => {
+              const first = Array.isArray(fileList) ? fileList[0] : null;
+              setFileFromUpload(first || null);
+            }}
+          />
+        </div>
 
         <div className="camera-tools">
           <div className="camera-settings">

@@ -3,6 +3,7 @@ import { getFaceModel } from "../lib/faceModel.js";
 import { acquireSharedCamera, releaseSharedCamera, buildCameraConstraints } from "../lib/sharedCamera.js";
 import API_BASE_URL from "../config/api.js";
 import { fetchBranches } from "../services/branches.js";
+import { registrarIncidencia } from "../services/incidencias.js";
 import { NativeSelect, NativeSelectOption } from "./ui/native-select.jsx";
 const SAMPLE_COUNT = 3;
 const SAMPLE_DELAY_MS = 200;
@@ -25,6 +26,8 @@ function FaceRecognition() {
   const [branches, setBranches] = useState([]);
   const [selectedBranchId, setSelectedBranchId] = useState("");
   const [geoChecking, setGeoChecking] = useState(false);
+  const [retrasoInfo, setRetrasoInfo] = useState(null);
+  const [sendingIncidencia, setSendingIncidencia] = useState(false);
 
   useEffect(() => {
     mountedRef.current = true;
@@ -183,6 +186,7 @@ function FaceRecognition() {
     try {
       setLoading(true);
       setStatus("Verificando ubicacion...");
+      setRetrasoInfo(null);
       const geoOk = await verificarGeocerca();
       if (!geoOk) {
         setLoading(false);
@@ -246,12 +250,24 @@ function FaceRecognition() {
         } - Accion: ${data.accion?.toUpperCase() || "N/A"} (score ${
           data.score?.toFixed?.(3) ?? data.score
         })${confidenceLabel}`;
+        if (data.estado) {
+          mensaje += `\nEstado: ${data.estado}`;
+        }
         if (data?.coincidencias?.length) {
           mensaje += `\nCoincidencias: ${data.coincidencias
             .map(c => `ID ${c.id_empleado} (${(c.score ?? 0).toFixed(3)})`)
             .join(", ")}`;
         }
         setStatus(mensaje);
+
+        if (data.estado === "retraso") {
+          setRetrasoInfo({
+            id_asistencia: data.asistencia?.id_asistencia || null,
+            horarioProgramado:
+              data.asistencia?.hora_programada || data.asistencia?.hora_entrada || data.asistencia?.hora_salida || null,
+            tolerancia: data.asistencia?.tolerancia_minutos ?? null
+          });
+        }
       } else {
         setStatus("No identificado");
       }
@@ -318,6 +334,30 @@ function FaceRecognition() {
     }
   }
 
+  async function handleJustificarRetraso() {
+    if (!retrasoInfo?.id_asistencia) {
+      setStatus("No hay datos de asistencia para justificar.");
+      return;
+    }
+    const motivo = window.prompt("Describe brevemente el motivo del retraso:");
+    if (!motivo) return;
+    try {
+      setSendingIncidencia(true);
+      await registrarIncidencia({
+        id_asistencia: retrasoInfo.id_asistencia,
+        descripcion: motivo,
+        tipo: "retraso"
+      });
+      setStatus(prev => `${prev}\nJustificacion enviada.`);
+      setRetrasoInfo(null);
+    } catch (err) {
+      console.error(err);
+      setStatus(err.message || "No se pudo registrar la justificacion");
+    } finally {
+      setSendingIncidencia(false);
+    }
+  }
+
   const isFrontCamera = cameraFacing === "front";
   return (
     <div className="recognition-panel">
@@ -365,6 +405,18 @@ function FaceRecognition() {
       <button type="button" onClick={identificar} disabled={loading || cameraBusy || geoChecking}>
         {loading || geoChecking ? "Procesando..." : "Identificar"}
       </button>
+
+      {retrasoInfo ? (
+        <div className="alert warning">
+          <p>
+            Llegaste con retraso. Horario programado: {retrasoInfo.horarioProgramado || "N/A"} (tolerancia{" "}
+            {retrasoInfo.tolerancia ?? 0} min).
+          </p>
+          <button type="button" onClick={handleJustificarRetraso} disabled={sendingIncidencia}>
+            {sendingIncidencia ? "Enviando..." : "Justificar retraso"}
+          </button>
+        </div>
+      ) : null}
 
       <pre className="recognition-status">{status}</pre>
     </div>

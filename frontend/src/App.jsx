@@ -8,7 +8,7 @@ import HeroVideoDialog from "./components/HeroVideoDialog.jsx";
 import AnimatedThemeToggler from "./components/AnimatedThemeToggler.jsx";
 import SmoothCursor from "./components/SmoothCursor.jsx";
 import { fetchZone, saveZone } from "./services/zone.js";
-import { fetchBranches, createBranch } from "./services/branches.js";
+import { fetchBranches, createBranch, deleteBranch } from "./services/branches.js";
 import MapPicker from "./components/MapPicker.jsx";
 import EmployeeSchedule from "./components/EmployeeSchedule.jsx";
 import EmployeeLogs from "./components/EmployeeLogs.jsx";
@@ -196,6 +196,7 @@ function App() {
   const [loadingZone, setLoadingZone] = useState(false);
   const [loadingBranches, setLoadingBranches] = useState(false);
   const [savingBranch, setSavingBranch] = useState(false);
+  const [deletingBranch, setDeletingBranch] = useState(false);
   const [newBranch, setNewBranch] = useState({ name: "", address: "" });
   const navMenuRef = useRef(null);
   const navToggleRef = useRef(null);
@@ -488,6 +489,36 @@ function App() {
     }
   }
 
+  async function handleDeleteBranch() {
+    if (!selectedBranchId) {
+      alert("Selecciona una sucursal para eliminar");
+      return;
+    }
+
+    const branch = branches.find(b => String(b.id) === String(selectedBranchId));
+    const name = branch?.name || selectedBranchId;
+    if (!window.confirm(`¿Eliminar la sucursal "${name}" y sus zonas asociadas?`)) {
+      return;
+    }
+
+    try {
+      setDeletingBranch(true);
+      await deleteBranch(selectedBranchId);
+      setBranches(prev => prev.filter(b => String(b.id) !== String(selectedBranchId)));
+
+      const remaining = branches.filter(b => String(b.id) !== String(selectedBranchId));
+      const nextId = remaining.length ? remaining[0].id : "";
+      setSelectedBranchId(nextId);
+      setZone({ center: { lat: 0, lng: 0 }, radius: 100, name: "" });
+      setZoneName("");
+    } catch (err) {
+      console.error(err);
+      alert(err.message || "No se pudo eliminar la sucursal");
+    } finally {
+      setDeletingBranch(false);
+    }
+  }
+
   async function handleLoginSubmit(event) {
     event.preventDefault();
     setLoginError("");
@@ -703,6 +734,14 @@ function App() {
                 </button>
                 <button type="button" className="ghost-button" onClick={handleClearZone}>
                   Limpiar seleccion
+                </button>
+                <button
+                  type="button"
+                  className="ghost-button"
+                  onClick={handleDeleteBranch}
+                  disabled={deletingBranch || loadingBranches || !selectedBranchId}
+                >
+                  {deletingBranch ? "Eliminando..." : "Eliminar sucursal"}
                 </button>
               </div>
               <p className="schedule-hint">Crear nueva sucursal</p>

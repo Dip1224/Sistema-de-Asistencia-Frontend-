@@ -21,3 +21,16 @@ export async function createBranch(payload) {
 
   return data.branch;
 }
+
+export async function deleteBranch(branchId) {
+  const response = await fetch(`${API_BASE_URL}/api/branches/${branchId}`, {
+    method: "DELETE"
+  });
+
+  const data = await response.json().catch(() => ({}));
+  if (!response.ok) {
+    throw new Error(data?.error || "No se pudo eliminar la sucursal");
+  }
+
+  return data.branch;
+}

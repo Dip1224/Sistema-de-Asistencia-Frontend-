@@ -21,6 +21,7 @@ export function TypingAnimation({
     if (!currentWord) return undefined;
 
     if (!isDeleting && display === currentWord) {
+      if (!loop) return undefined;
       const pauseId = setTimeout(() => setIsDeleting(true), pause);
       return () => clearTimeout(pauseId);
     }

@@ -13,6 +13,7 @@ import MapPicker from "./components/MapPicker.jsx";
 import EmployeeSchedule from "./components/EmployeeSchedule.jsx";
 import EmployeeLogs from "./components/EmployeeLogs.jsx";
 import VerifyIntro from "./components/VerifyIntro.jsx";
+import LayoutTextFlip from "./components/ui/layout-text-flip.jsx";
 import { TypingAnimation } from "./components/ui/typing-animation.jsx";
 
 const AUTH_STORAGE_KEY = "sr_auth_info";
@@ -217,6 +218,8 @@ function App() {
   const [loadingBranches, setLoadingBranches] = useState(false);
   const [savingBranch, setSavingBranch] = useState(false);
   const [newBranch, setNewBranch] = useState({ name: "", address: "" });
+  const navMenuRef = useRef(null);
+  const navToggleRef = useRef(null);
   const sessionHandledRef = useRef(false);
   const originalFetchRef = useRef(window.fetch);
   const navigate = useNavigate();
@@ -357,6 +360,21 @@ function App() {
   function toggleMenu() {
     setMenuOpen(prev => !prev);
   }
+
+  useEffect(() => {
+    if (!menuOpen) return undefined;
+    const handleClickOutside = event => {
+      if (navMenuRef.current?.contains(event.target)) return;
+      if (navToggleRef.current?.contains(event.target)) return;
+      setMenuOpen(false);
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    document.addEventListener("touchstart", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+      document.removeEventListener("touchstart", handleClickOutside);
+    };
+  }, [menuOpen]);
 
   function handleSelectView(view) {
     setActiveView(view);
@@ -605,15 +623,23 @@ function App() {
           <header className="map-header">
             <div>
               <p className="map-subtitle">Geocerca de verificacion</p>
-              <h2>Define un punto y radio para autorizar marcaciones</h2>
+              <h2>
+                <TypingAnimation
+                  words={[
+                    "Define un punto y radio para autorizar marcaciones",
+                    "Solo los empleados en zona podran marcar",
+                    "Configura la geocerca en segundos"
+                  ]}
+                  loop
+                  className="typing-dark"
+                />
+              </h2>
               <p className="map-description">
                 Elige una ubicacion en el mapa y establece el radio permitido. Solo los empleados dentro de esa zona
                 podran verificarse.
               </p>
             </div>
             <div className="map-legend">
-              <span className="dot center" />
-              <small>Punto central</small>
               <span className="dot radius" />
               <small>Radio permitido</small>
             </div>
@@ -739,7 +765,12 @@ function App() {
           <header className="register-header">
             <div>
               <p className="register-subtitle">Registro rapido de empleados</p>
-              <h1>Sube los datos y captura la foto en un solo paso</h1>
+              <div className="register-animated-title">
+                <LayoutTextFlip
+                  text="Registra al empleado"
+                  words={["y su plantilla facial", "con datos + foto", "en un solo paso"]}
+                />
+              </div>
               <p className="register-description">
                 Completa la informacion, adjunta una foto desde tu equipo o usa la camara integrada para tomarla al
                 momento.
@@ -827,13 +858,19 @@ function App() {
               isAdmin ? (
                 <div className="app-shell">
                   <header className="app-nav">
-                    <button className="menu-toggle" type="button" onClick={toggleMenu} aria-label="Abrir menu">
+                    <button
+                      ref={navToggleRef}
+                      className="menu-toggle"
+                      type="button"
+                      onClick={toggleMenu}
+                      aria-label="Abrir menu"
+                    >
                       <span />
                       <span />
                       <span />
                     </button>
 
-                    <nav className={`nav-menu ${menuOpen ? "open" : ""}`}>
+                    <nav ref={navMenuRef} className={`nav-menu ${menuOpen ? "open" : ""}`}>
                       <button
                         type="button"
                         className={`menu-option ${activeView === "register" ? "active" : ""}`}

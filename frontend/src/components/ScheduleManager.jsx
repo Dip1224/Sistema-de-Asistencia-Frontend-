@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import API_BASE_URL from "../config/api.js";
 import { NativeSelect, NativeSelectOption } from "./ui/native-select.jsx";
+import { TypingAnimation } from "./ui/typing-animation.jsx";
 const DAYS = [
   { value: 1, label: "Lunes" },
   { value: 2, label: "Martes" },
@@ -161,7 +162,13 @@ function ScheduleManager() {
     <section className="schedule-card">
       <header>
         <p className="register-subtitle">Control horario</p>
-        <h2>Define la jornada para cada empleado</h2>
+        <h2>
+          <TypingAnimation
+            words={["Define la jornada para cada empleado", "Asigna entrada y salida", "Configura tolerancias"]}
+            loop
+            className="typing-dark"
+          />
+        </h2>
         <p className="register-description">
           Selecciona el empleado, elige los días y establece su horario de entrada y salida.
         </p>

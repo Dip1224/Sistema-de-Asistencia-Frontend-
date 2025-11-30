@@ -565,6 +565,22 @@ body {
   }
 }
 
+.typing-dark {
+  color: #0b0b0b;
+}
+
+.typing-dark .typing-animation__caret {
+  background: #0b0b0b;
+}
+
+html.dark .typing-dark {
+  color: #f5f5f5;
+}
+
+html.dark .typing-dark .typing-animation__caret {
+  background: #f5f5f5;
+}
+
 .hero-card ul {
   margin: 0;
   padding-left: 1.25rem;
@@ -1141,10 +1157,6 @@ html.dark .map-controls .ghost-button {
   border: 2px solid #0ea5e9;
 }
 
-.map-legend .dot.radius {
-  border-color: #a855f7;
-}
-
 .map-layout {
   display: grid;
   grid-template-columns: 2fr 1fr;
@@ -1182,6 +1194,13 @@ html.dark .map-controls .ghost-button {
   border-radius: 1rem;
   overflow: hidden;
   border: 1px solid #d4d4d8;
+  position: relative;
+  z-index: 0;
+}
+
+.map-leaflet .leaflet-pane,
+.map-leaflet .leaflet-control-container {
+  z-index: 1 !important;
 }
 
 .map-controls {
@@ -1423,6 +1442,7 @@ html.dark .schedule-table button {
   background: var(--panel-bg);
   border: 1px solid var(--border);
   border-radius: 12px;
+  overflow: hidden;
 }
 
 .logs-table {
@@ -1469,6 +1489,7 @@ html.dark .schedule-table button {
   gap: 8px;
   align-items: center;
   padding: 10px 12px;
+  overflow: hidden;
 }
 
 .logs-header {
@@ -1532,11 +1553,43 @@ html.dark .schedule-table button {
 }
 
 @media (max-width: 768px) {
-  .logs-header,
+  .logs-table {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .logs-header {
+    display: none;
+  }
+
   .logs-row {
-    grid-template-columns: 1fr;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    padding: 12px;
     border: 1px solid var(--border);
     border-radius: 10px;
+    background: var(--panel-muted);
+  }
+
+  .logs-field {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    padding: 6px 8px;
+    border-radius: 8px;
+    background: var(--panel-strong);
+  }
+
+  .logs-label {
+    font-weight: 700;
+    font-size: 0.9rem;
+    color: var(--muted);
+  }
+
+  .logs-value {
+    word-break: break-word;
   }
 
   .logs-toolbar {
@@ -2567,6 +2620,38 @@ html.dark .recognition-header p {
   margin: 0;
 }
 
+.register-animated-title {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  flex-wrap: wrap;
+  font-size: clamp(1.5rem, 3vw, 1.9rem);
+  font-weight: 800;
+  color: #0b0b0b;
+}
+
+.register-card .layout-flip__prefix {
+  color: #475569;
+}
+
+.register-card .layout-flip__word {
+  background: #0b0b0b;
+  color: #f5f5f5;
+}
+
+html.dark .register-animated-title {
+  color: #f5f5f5;
+}
+
+html.dark .register-card .layout-flip__prefix {
+  color: #cbd5e1;
+}
+
+html.dark .register-card .layout-flip__word {
+  background: #f5f5f5;
+  color: #0b0b0b;
+}
+
 .layout-flip {
   display: inline-flex;
   align-items: center;
@@ -2742,10 +2827,33 @@ html.dark .native-select__chevron {
     width: 100%;
   }
 
-  .logs-header,
+  .logs-table {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .logs-header {
+    display: none;
+  }
+
   .logs-row {
-    grid-template-columns: 1fr;
-    gap: 4px;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    padding: 12px;
+  }
+
+  .logs-field {
+    display: grid;
+    grid-template-columns: 90px 1fr;
+    gap: 6px;
+    align-items: center;
+  }
+
+  .logs-label {
+    font-weight: 700;
+    font-size: 0.95rem;
   }
 
   .recognition-panel button {

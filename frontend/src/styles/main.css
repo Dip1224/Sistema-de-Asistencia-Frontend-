@@ -1977,33 +1977,6 @@ html.dark .map-controls .ghost-button {
   white-space: pre-wrap;
 }
 
-.recognition-video-wrapper {
-  position: relative;
-}
-
-.recognition-overlay {
-  position: absolute;
-  inset: 0;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
-  background: rgba(0, 0, 0, 0.55);
-  border-radius: 1rem;
-}
-
-.recognition-overlay img {
-  max-width: 70%;
-  max-height: 70%;
-  object-fit: contain;
-}
-
-.recognition-overlay p {
-  color: #f8fafc;
-  font-weight: 600;
-}
-
 @media (max-width: 480px) {
   :root {
     font-size: 16px;

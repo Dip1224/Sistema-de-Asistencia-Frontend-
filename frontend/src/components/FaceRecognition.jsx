@@ -3,8 +3,6 @@ import { getFaceModel } from "../lib/faceModel.js";
 import { acquireSharedCamera, releaseSharedCamera, buildCameraConstraints } from "../lib/sharedCamera.js";
 import API_BASE_URL from "../config/api.js";
 import { fetchBranches } from "../services/branches.js";
-
-const IDENTIFYING_GIF = "/assets/scanner.gif"; // coloca tu gif en frontend/public/assets/scanner.gif
 const SAMPLE_COUNT = 3;
 const SAMPLE_DELAY_MS = 200;
 const IDENTIFICATION_ROUNDS = 2;
@@ -315,8 +313,6 @@ function FaceRecognition() {
   }
 
   const isFrontCamera = cameraFacing === "front";
-  const isProcessing = loading || geoChecking;
-
   return (
     <div className="recognition-panel">
       <div className="recognition-header">
@@ -354,27 +350,19 @@ function FaceRecognition() {
             ))}
           </select>
         </div>
-        <div className="recognition-video-wrapper">
-          <video
-            ref={videoRef}
-            autoPlay
-            playsInline
-            muted
-            style={isFrontCamera ? { transform: "scaleX(-1)" } : undefined}
-          />
-          {isProcessing && (
-            <div className="recognition-overlay">
-              <img src={IDENTIFYING_GIF} alt="Procesando verificacion" />
-              <p>Procesando verificacion...</p>
-            </div>
-          )}
-        </div>
+        <video
+          ref={videoRef}
+          autoPlay
+          playsInline
+          muted
+          style={isFrontCamera ? { transform: "scaleX(-1)" } : undefined}
+        />
       </div>
 
       {cameraError && <p className="camera-error">{cameraError}</p>}
 
-      <button type="button" onClick={identificar} disabled={isProcessing || cameraBusy}>
-        {isProcessing ? "Procesando..." : "Identificar"}
+      <button type="button" onClick={identificar} disabled={loading || cameraBusy || geoChecking}>
+        {loading || geoChecking ? "Procesando..." : "Identificar"}
       </button>
 
       <pre className="recognition-status">{status}</pre>

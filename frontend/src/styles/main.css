@@ -2004,8 +2004,8 @@ html.dark .upload-icon {
 .mini-calendar__day {
   border: 1px solid #e2e8f0;
   background: #fff;
-  padding: 0.4rem 0.2rem;
-  border-radius: 8px;
+  padding: 0.32rem 0.15rem;
+  border-radius: 7px;
   cursor: pointer;
 }
 
@@ -2022,29 +2022,31 @@ html.dark .upload-icon {
 
 @media (max-width: 480px) {
   .date-popover {
-    padding: 0.6rem;
-    gap: 6px;
+    padding: 0.5rem;
+    gap: 5px;
+    width: min(280px, calc(100vw - 20px));
   }
 
   .mini-calendar__header {
-    gap: 6px;
+    gap: 5px;
   }
 
   .mini-calendar__title {
-    font-size: 0.95rem;
+    font-size: 0.9rem;
   }
 
   .mini-calendar__weekdays {
-    font-size: 0.78rem;
+    font-size: 0.75rem;
   }
 
   .mini-calendar__grid {
-    gap: 4px;
+    gap: 3px;
   }
 
   .mini-calendar__day {
-    padding: 0.3rem 0.15rem;
-    font-size: 0.9rem;
+    padding: 0.25rem 0.12rem;
+    font-size: 0.82rem;
+    border-radius: 6px;
   }
 }
 

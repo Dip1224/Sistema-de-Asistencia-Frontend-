@@ -1994,8 +1994,8 @@ html.dark .map-controls .ghost-button {
 }
 
 .recognition-overlay img {
-  width: 120px;
-  height: 120px;
+  max-width: 70%;
+  max-height: 70%;
   object-fit: contain;
 }
 

@@ -118,8 +118,8 @@ function HomePage({ onEnterApp, onLogin, onGoHome }) {
             <HeroVideoDialog
               animationStyle="from-center"
               videoSrc="https://www.youtube.com/embed/bIVIEZNsa_I?si=bMn8WHcfcplVEpR6"
-              thumbnailSrc="https://startup-template-sage.vercel.app/hero-light.png"
-              darkThumbnailSrc="https://startup-template-sage.vercel.app/hero-dark.png"
+              thumbnailSrc="/hero-cover-dark.jpg"
+              darkThumbnailSrc="/hero-cover-dark.jpg"
               thumbnailAlt="Demo de reconocimiento"
             />
           </div>

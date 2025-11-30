@@ -16,23 +16,63 @@ function useIsDark() {
   return isDark;
 }
 
+const DEFAULT_LIGHT_THUMB = "https://startup-template-sage.vercel.app/hero-light.png";
+const DEFAULT_DARK_THUMB = "https://startup-template-sage.vercel.app/hero-dark.png";
+
 const HeroVideoDialog = ({
   className = "",
   animationStyle = "fade",
   videoSrc,
   thumbnailSrc,
   thumbnailAlt = "Hero video",
-  darkThumbnailSrc
+  darkThumbnailSrc,
+  inline = false
 }) => {
   const isDark = useIsDark();
   const [open, setOpen] = useState(false);
+  const [resolvedThumb, setResolvedThumb] = useState(() => {
+    const thumb = isDark && darkThumbnailSrc ? darkThumbnailSrc : thumbnailSrc;
+    return thumb || (isDark ? DEFAULT_DARK_THUMB : DEFAULT_LIGHT_THUMB);
+  });
 
-  const finalThumb = isDark && darkThumbnailSrc ? darkThumbnailSrc : thumbnailSrc;
+  useEffect(() => {
+    const thumb = isDark && darkThumbnailSrc ? darkThumbnailSrc : thumbnailSrc;
+    setResolvedThumb(thumb || (isDark ? DEFAULT_DARK_THUMB : DEFAULT_LIGHT_THUMB));
+  }, [isDark, thumbnailSrc, darkThumbnailSrc]);
+
+  if (inline) {
+    return (
+      <div className={`hero-video hero-video--inline ${className}`}>
+        <div className="hero-video__frame">
+          <iframe
+            src={videoSrc}
+            title="Demo de reconocimiento"
+            frameBorder="0"
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+            allowFullScreen
+          />
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className={`hero-video ${className}`}>
       <button type="button" className="hero-video__thumb" onClick={() => setOpen(true)}>
-        <img src={finalThumb} alt={thumbnailAlt} loading="lazy" />
+        <img
+          src={resolvedThumb}
+          alt={thumbnailAlt}
+          loading="lazy"
+          onError={() =>
+            setResolvedThumb(prev =>
+              prev === (isDark ? DEFAULT_DARK_THUMB : DEFAULT_LIGHT_THUMB)
+                ? prev
+                : isDark
+                  ? DEFAULT_DARK_THUMB
+                  : DEFAULT_LIGHT_THUMB
+            )
+          }
+        />
         <span className="hero-video__play">Ver video</span>
       </button>
 

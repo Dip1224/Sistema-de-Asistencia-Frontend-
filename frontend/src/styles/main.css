@@ -1552,6 +1552,87 @@ html.dark .schedule-table button {
   color: #e74c3c;
 }
 
+.profile-card {
+  flex: 1 1 420px;
+  background: #ffffff;
+  border-radius: 1.5rem;
+  padding: 1.75rem;
+  box-shadow:
+    0 12px 30px rgba(15, 23, 42, 0.08),
+    0 4px 12px rgba(15, 23, 42, 0.05);
+  border: 1px solid #e5e7eb;
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+.profile-body {
+  display: grid;
+  grid-template-columns: 160px 1fr;
+  gap: 1.25rem;
+  align-items: center;
+}
+
+.profile-avatar {
+  width: 140px;
+  height: 140px;
+  border-radius: 20px;
+  background: #f8fafc;
+  border: 1px solid #e5e7eb;
+  display: grid;
+  place-items: center;
+  overflow: hidden;
+  font-size: 2.8rem;
+  font-weight: 800;
+  color: #0b0b0b;
+}
+
+.profile-avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.profile-info {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 0.85rem;
+}
+
+.profile-label {
+  margin: 0;
+  color: #64748b;
+  font-weight: 700;
+  font-size: 0.9rem;
+}
+
+.profile-value {
+  margin: 0.1rem 0 0;
+  font-size: 1rem;
+  font-weight: 700;
+  color: #0b0b0b;
+}
+
+html.dark .profile-card {
+  background: #111112;
+  color: #f5f5f5;
+  border-color: #1f1f1f;
+}
+
+html.dark .profile-avatar {
+  background: #0e0e0f;
+  border-color: #1f1f1f;
+  color: #f5f5f5;
+}
+
+html.dark .profile-label {
+  color: #cbd5e1;
+}
+
+html.dark .profile-value {
+  color: #f5f5f5;
+}
+
 @media (max-width: 768px) {
   .logs-table {
     display: flex;

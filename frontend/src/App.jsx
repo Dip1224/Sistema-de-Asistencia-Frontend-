@@ -15,6 +15,7 @@ import EmployeeLogs from "./components/EmployeeLogs.jsx";
 import VerifyIntro from "./components/VerifyIntro.jsx";
 import LayoutTextFlip from "./components/ui/layout-text-flip.jsx";
 import { TypingAnimation } from "./components/ui/typing-animation.jsx";
+import ProfileCard from "./components/ProfileCard.jsx";
 
 const AUTH_STORAGE_KEY = "sr_auth_info";
 
@@ -114,16 +115,6 @@ function HomePage({ onEnterApp, onLogin, onGoHome }) {
                   Verificar asistencia
                 </button>
               </div>
-            </div>
-
-            <div className="hero-card">
-              <div className="hero-badge">Flujo rapido</div>
-              <p className="hero-highlight">Carga de datos + foto en un solo paso</p>
-              <ul>
-                <li>Sube o toma la foto desde la camara</li>
-                <li>Genera embeddings y registra plantilla</li>
-                <li>Marca entrada y salida en segundos</li>
-              </ul>
             </div>
           </div>
 
@@ -309,7 +300,7 @@ function App() {
       setActiveView("home");
       return;
     }
-    const allowedViews = isAdmin ? ["register", "verify", "schedules", "map", "logs"] : [];
+    const allowedViews = isAdmin ? ["register", "verify", "schedules", "map", "logs", "profile"] : [];
     const defaultView = isAdmin ? "register" : "verify";
     if (!allowedViews.includes(activeView)) {
       setActiveView(defaultView);
@@ -759,6 +750,10 @@ function App() {
       return <EmployeeLogs />;
     }
 
+    if (activeView === "profile") {
+      return <ProfileCard user={authInfo} />;
+    }
+
     if (activeView === "register") {
       return (
         <section className="register-card">
@@ -905,6 +900,13 @@ function App() {
                         onClick={() => handleMenuAction("logs")}
                       >
                         Historial
+                      </button>
+                      <button
+                        type="button"
+                        className={`menu-option ${activeView === "profile" ? "active" : ""}`}
+                        onClick={() => handleMenuAction("profile")}
+                      >
+                        Perfil
                       </button>
                     </nav>
 

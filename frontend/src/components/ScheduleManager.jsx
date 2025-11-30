@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import API_BASE_URL from "../config/api.js";
+import { NativeSelect, NativeSelectOption } from "./ui/native-select.jsx";
 const DAYS = [
   { value: 1, label: "Lunes" },
   { value: 2, label: "Martes" },
@@ -167,21 +168,19 @@ function ScheduleManager() {
       </header>
 
       <form className="schedule-form" onSubmit={handleSubmit}>
-        <label>
-          Empleado
-          <select
-            value={selectedEmployee}
-            onChange={event => setSelectedEmployee(event.target.value)}
-            required
-          >
-            <option value="">Selecciona un empleado</option>
-            {employees.map(emp => (
-              <option key={emp.id_empleado} value={emp.id_empleado}>
-                {emp.nombre} {emp.apellido} (ID {emp.id_empleado})
-              </option>
-            ))}
-          </select>
-        </label>
+        <NativeSelect
+          label="Empleado"
+          value={selectedEmployee}
+          onChange={event => setSelectedEmployee(event.target.value)}
+          required
+        >
+          <NativeSelectOption value="">Selecciona un empleado</NativeSelectOption>
+          {employees.map(emp => (
+            <NativeSelectOption key={emp.id_empleado} value={emp.id_empleado}>
+              {emp.nombre} {emp.apellido} (ID {emp.id_empleado})
+            </NativeSelectOption>
+          ))}
+        </NativeSelect>
 
         <div>
           <p className="field-label">Días de la semana</p>

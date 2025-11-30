@@ -5,6 +5,7 @@ import API_BASE_URL from "../config/api.js";
 import { fetchRoles } from "../services/roles.js";
 import { fetchDepartamentos } from "../services/departamentos.js";
 import { FileUpload } from "./ui/file-upload.jsx";
+import { NativeSelect, NativeSelectOption } from "./ui/native-select.jsx";
 
 const CAMERA_OPTIONS = [
   { value: "front", label: "Camara frontal / selfie" },
@@ -398,7 +399,14 @@ function TestEmployeeUpload() {
 
   function formatDateForDisplay(value) {
     if (!value) return "";
-    const dateObj = new Date(value);
+    let dateObj;
+    // Parse YYYY-MM-DD as local date to avoid timezone shifts on display
+    if (typeof value === "string" && /^\d{4}-\d{2}-\d{2}$/.test(value)) {
+      const [y, m, d] = value.split("-").map(Number);
+      dateObj = new Date(y, m - 1, d);
+    } else {
+      dateObj = new Date(value);
+    }
     if (Number.isNaN(dateObj.getTime())) return value;
     return dateObj.toLocaleDateString("es-ES", {
       day: "2-digit",
@@ -489,17 +497,14 @@ function TestEmployeeUpload() {
           style={{ display: "none" }}
           aria-hidden="true"
         />
-        <label>
-          Cargo
-          <select value={cargo} onChange={e => setCargo(e.target.value)} required>
-            <option value="">Selecciona un cargo</option>
-            {CARGO_OPTIONS.map(option => (
-              <option key={option} value={option}>
-                {option}
-              </option>
-            ))}
-          </select>
-        </label>
+        <NativeSelect label="Cargo" value={cargo} onChange={e => setCargo(e.target.value)} required>
+          <NativeSelectOption value="">Selecciona un cargo</NativeSelectOption>
+          {CARGO_OPTIONS.map(option => (
+            <NativeSelectOption key={option} value={option}>
+              {option}
+            </NativeSelectOption>
+          ))}
+        </NativeSelect>
         {isAdminSelected && (
           <>
             <label>
@@ -525,38 +530,43 @@ function TestEmployeeUpload() {
             </label>
           </>
         )}
-        <label>
-          Rol
-          <select value={idRol} onChange={e => setIdRol(e.target.value)} disabled={loadingRoles}>
-            <option value="">{loadingRoles ? "Cargando roles..." : "Selecciona un rol"}</option>
-            {roles.map(role => (
-              <option key={role.id_rol} value={role.id_rol}>
-                {role.id_rol} - {role.nombre}
-              </option>
-            ))}
-          </select>
-        </label>
+        <NativeSelect
+          label="Rol"
+          value={idRol}
+          onChange={e => setIdRol(e.target.value)}
+          disabled={loadingRoles}
+          required
+        >
+          <NativeSelectOption value="">
+            {loadingRoles ? "Cargando roles..." : "Selecciona un rol"}
+          </NativeSelectOption>
+          {roles.map(role => (
+            <NativeSelectOption key={role.id_rol} value={role.id_rol}>
+              {role.id_rol} - {role.nombre}
+            </NativeSelectOption>
+          ))}
+        </NativeSelect>
         <input
           type="text"
           style={{ display: "none" }}
           aria-hidden="true"
         />
-        <label>
-          Departamento
-          <select
-            value={idDepartamento}
-            onChange={e => setIdDepartamento(e.target.value)}
-            disabled={loadingDepartamentos}
-            required
-          >
-            <option value="">{loadingDepartamentos ? "Cargando departamentos..." : "Selecciona un departamento"}</option>
-            {departamentos.map(dep => (
-              <option key={dep.id_departamento} value={dep.id_departamento}>
-                {dep.id_departamento} - {dep.nombre}
-              </option>
-            ))}
-          </select>
-        </label>
+        <NativeSelect
+          label="Departamento"
+          value={idDepartamento}
+          onChange={e => setIdDepartamento(e.target.value)}
+          disabled={loadingDepartamentos}
+          required
+        >
+          <NativeSelectOption value="">
+            {loadingDepartamentos ? "Cargando departamentos..." : "Selecciona un departamento"}
+          </NativeSelectOption>
+          {departamentos.map(dep => (
+            <NativeSelectOption key={dep.id_departamento} value={dep.id_departamento}>
+              {dep.id_departamento} - {dep.nombre}
+            </NativeSelectOption>
+          ))}
+        </NativeSelect>
         <label>
           Fecha de ingreso
           <div className="date-field">

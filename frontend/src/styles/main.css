@@ -2023,3 +2023,60 @@ html.dark .map-controls .ghost-button {
     text-align: center;
   }
 }
+
+/* Ajustes responsive generales */
+@media (max-width: 768px) {
+  .app-shell .workspace {
+    padding: 12px;
+  }
+
+  .register-card,
+  .schedule-card,
+  .map-card,
+  .recognition-card,
+  .logs-card {
+    padding: 12px;
+  }
+
+  .simple-form,
+  .schedule-form {
+    padding: 12px;
+  }
+
+  .simple-form input,
+  .simple-form select,
+  .simple-form button,
+  .schedule-form input,
+  .schedule-form select,
+  .schedule-form button,
+  .test-upload input,
+  .test-upload select {
+    width: 100%;
+    box-sizing: border-box;
+  }
+
+  .camera-actions {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 8px;
+  }
+
+  .map-layout {
+    flex-direction: column;
+  }
+
+  .map-controls {
+    width: 100%;
+  }
+
+  .logs-header,
+  .logs-row {
+    grid-template-columns: 1fr;
+    gap: 4px;
+  }
+
+  .recognition-panel button {
+    width: 100%;
+    text-align: center;
+  }
+}

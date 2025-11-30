@@ -502,20 +502,6 @@ function TestEmployeeUpload() {
             </label>
           </div>
 
-          <div className="camera-actions">
-            <button type="button" onClick={() => startCamera()} disabled={isCameraBusy || isCameraActive}>
-              Iniciar camara
-            </button>
-            <button type="button" onClick={capturePhoto} disabled={!isCameraActive}>
-              Tomar foto
-            </button>
-            <button type="button" onClick={handleDiscardClick} disabled={!capturedPreview && !fotoFile}>
-              Limpiar foto
-            </button>
-          </div>
-
-          {cameraError && <p className="camera-error">{cameraError}</p>}
-
           {isCameraActive && (
             <div className="camera-preview">
               <video
@@ -527,6 +513,17 @@ function TestEmployeeUpload() {
               />
             </div>
           )}
+
+          <div className="camera-actions">
+            <button type="button" onClick={capturePhoto} disabled={!isCameraActive}>
+              Tomar foto
+            </button>
+            <button type="button" onClick={handleDiscardClick} disabled={!capturedPreview && !fotoFile}>
+              Reintentar foto
+            </button>
+          </div>
+
+          {cameraError && <p className="camera-error">{cameraError}</p>}
 
           <canvas ref={canvasRef} className="camera-canvas" />
 

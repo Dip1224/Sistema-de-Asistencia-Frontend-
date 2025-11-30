@@ -1183,6 +1183,15 @@ html.dark .map-controls .ghost-button {
   .map-buttons button {
     width: 100%;
   }
+
+  .schedule-table {
+    min-width: 480px;
+  }
+
+  .schedule-table th,
+  .schedule-table td {
+    white-space: nowrap;
+  }
 }
 
 .schedule-form {
@@ -1251,10 +1260,12 @@ html.dark .map-controls .ghost-button {
   border-radius: 1.25rem;
   padding: 1.5rem;
   background: #fff;
+  overflow-x: auto;
 }
 
 .schedule-table {
   width: 100%;
+  min-width: 520px;
   border-collapse: collapse;
   margin-top: 1rem;
 }
@@ -1275,6 +1286,10 @@ html.dark .map-controls .ghost-button {
 
 .schedule-table td:last-child {
   text-align: right;
+}
+
+.schedule-table button {
+  white-space: nowrap;
 }
 
 .schedule-hint {

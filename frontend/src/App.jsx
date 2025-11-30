@@ -299,7 +299,7 @@ function App() {
       setActiveView("home");
       return;
     }
-    const allowedViews = isAdmin ? ["register", "verify", "schedules", "map", "logs"] : ["verify", "mySchedules"];
+    const allowedViews = isAdmin ? ["register", "verify", "schedules", "map", "logs"] : [];
     const defaultView = isAdmin ? "register" : "verify";
     if (!allowedViews.includes(activeView)) {
       setActiveView(defaultView);
@@ -797,83 +797,84 @@ function App() {
           path="/dashboard"
           element={
             isAuthenticated ? (
-              <div className="app-shell">
-                <header className="app-nav">
-                  <button className="menu-toggle" type="button" onClick={toggleMenu} aria-label="Abrir menu">
-                    <span />
-                    <span />
-                    <span />
-                  </button>
+              isAdmin ? (
+                <div className="app-shell">
+                  <header className="app-nav">
+                    <button className="menu-toggle" type="button" onClick={toggleMenu} aria-label="Abrir menu">
+                      <span />
+                      <span />
+                      <span />
+                    </button>
 
-                  <nav className={`nav-menu ${menuOpen ? "open" : ""}`}>
-                    {isAdmin ? (
-                      <>
-                        <button
-                          type="button"
-                          className={`menu-option ${activeView === "register" ? "active" : ""}`}
-                          onClick={() => handleMenuAction("register")}
-                        >
-                          Registrar
-                        </button>
-                        <button
-                          type="button"
-                          className={`menu-option ${activeView === "verify" ? "active" : ""}`}
-                          onClick={() => handleMenuAction("verify")}
-                        >
-                          Verificar
-                        </button>
-                        <button
-                          type="button"
-                          className={`menu-option ${activeView === "schedules" ? "active" : ""}`}
-                          onClick={() => handleMenuAction("schedules")}
-                        >
-                          Horarios
-                        </button>
-                        <button
-                          type="button"
-                          className={`menu-option ${activeView === "map" ? "active" : ""}`}
-                          onClick={() => handleMenuAction("map")}
-                        >
-                          Mapa
-                        </button>
-                        <button
-                          type="button"
-                          className={`menu-option ${activeView === "logs" ? "active" : ""}`}
-                          onClick={() => handleMenuAction("logs")}
-                        >
-                          Historial
-                        </button>
-                      </>
-                    ) : (
-                      <>
-                        <button
-                          type="button"
-                          className={`menu-option ${activeView === "verify" ? "active" : ""}`}
-                          onClick={() => handleMenuAction("verify")}
-                        >
-                          Verificar
-                        </button>
-                        <button
-                          type="button"
-                          className={`menu-option ${activeView === "mySchedules" ? "active" : ""}`}
-                          onClick={() => handleMenuAction("mySchedules")}
-                        >
-                          Mis horarios
-                        </button>
-                      </>
-                    )}
-                  </nav>
+                    <nav className={`nav-menu ${menuOpen ? "open" : ""}`}>
+                      <button
+                        type="button"
+                        className={`menu-option ${activeView === "register" ? "active" : ""}`}
+                        onClick={() => handleMenuAction("register")}
+                      >
+                        Registrar
+                      </button>
+                      <button
+                        type="button"
+                        className={`menu-option ${activeView === "verify" ? "active" : ""}`}
+                        onClick={() => handleMenuAction("verify")}
+                      >
+                        Verificar
+                      </button>
+                      <button
+                        type="button"
+                        className={`menu-option ${activeView === "schedules" ? "active" : ""}`}
+                        onClick={() => handleMenuAction("schedules")}
+                      >
+                        Horarios
+                      </button>
+                      <button
+                        type="button"
+                        className={`menu-option ${activeView === "map" ? "active" : ""}`}
+                        onClick={() => handleMenuAction("map")}
+                      >
+                        Mapa
+                      </button>
+                      <button
+                        type="button"
+                        className={`menu-option ${activeView === "logs" ? "active" : ""}`}
+                        onClick={() => handleMenuAction("logs")}
+                      >
+                        Historial
+                      </button>
+                    </nav>
 
-                <div className="nav-actions">
-                  <AnimatedThemeToggler className="theme-toggle" aria-label="Cambiar tema" />
-                  <button type="button" onClick={handleLogout} className="primary-btn">
-                    Cerrar sesion
-                  </button>
+                    <div className="nav-actions">
+                      <AnimatedThemeToggler className="theme-toggle" aria-label="Cambiar tema" />
+                      <button type="button" onClick={handleLogout} className="primary-btn">
+                        Cerrar sesion
+                      </button>
+                    </div>
+                  </header>
+
+                  <main className="workspace">{renderActiveView()}</main>
                 </div>
-              </header>
-
-                <main className="workspace">{renderActiveView()}</main>
-              </div>
+              ) : (
+                <div className="app-shell">
+                  <header className="app-nav">
+                    <div className="nav-actions">
+                      <AnimatedThemeToggler className="theme-toggle" aria-label="Cambiar tema" />
+                      <button type="button" onClick={handleLogout} className="primary-btn">
+                        Cerrar sesion
+                      </button>
+                    </div>
+                  </header>
+                  <main className="workspace">
+                    <section className="recognition-card">
+                      <header className="register-header">
+                        <p className="register-subtitle">Acceso restringido</p>
+                        <h1>Solo administradores pueden usar este panel</h1>
+                        <p className="register-description">Cierra sesión e ingresa con una cuenta de administrador.</p>
+                      </header>
+                    </section>
+                  </main>
+                </div>
+              )
             ) : (
               <Navigate to="/login" replace />
             )

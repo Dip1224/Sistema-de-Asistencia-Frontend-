@@ -58,6 +58,7 @@ function TestEmployeeUpload() {
   const streamRef = useRef(null);
   const fileInputRef = useRef(null);
   const mountedRef = useRef(false);
+  const isAdminSelected = Number(idRol) === 1;
 
   useEffect(() => {
     mountedRef.current = true;
@@ -311,11 +312,13 @@ function TestEmployeeUpload() {
       formData.append("nombre", nombre);
       formData.append("apellido", apellido);
       formData.append("cargo", cargo);
-      if (username) {
-        formData.append("username", username);
-      }
-      if (userPassword) {
-        formData.append("password", userPassword);
+      if (isAdminSelected) {
+        if (username) {
+          formData.append("username", username);
+        }
+        if (userPassword) {
+          formData.append("password", userPassword);
+        }
       }
       if (idRol) {
         formData.append("id_rol", idRol);
@@ -497,27 +500,31 @@ function TestEmployeeUpload() {
             ))}
           </select>
         </label>
-        <label>
-          Usuario para el panel (se genera con nombre y apellido)
-          <input
-            type="text"
-            placeholder="Usuario para el panel"
-            value={username}
-            onChange={e => {
-              setUsername(e.target.value);
-              setUsernameEdited(true);
-            }}
-          />
-        </label>
-        <label>
-          Contrasena para el panel (por defecto 123)
-          <input
-            type="password"
-            placeholder="Contrasena para el panel"
-            value={userPassword}
-            onChange={e => setUserPassword(e.target.value)}
-          />
-        </label>
+        {isAdminSelected && (
+          <>
+            <label>
+              Usuario para el panel (se genera con nombre y apellido)
+              <input
+                type="text"
+                placeholder="Usuario para el panel"
+                value={username}
+                onChange={e => {
+                  setUsername(e.target.value);
+                  setUsernameEdited(true);
+                }}
+              />
+            </label>
+            <label>
+              Contrasena para el panel (por defecto 123)
+              <input
+                type="password"
+                placeholder="Contrasena para el panel"
+                value={userPassword}
+                onChange={e => setUserPassword(e.target.value)}
+              />
+            </label>
+          </>
+        )}
         <label>
           Rol
           <select value={idRol} onChange={e => setIdRol(e.target.value)} disabled={loadingRoles}>

@@ -207,6 +207,9 @@ function FaceRecognition() {
       }
 
       setStatus("Enviando embeddings al backend...");
+      const clientNow = new Date();
+      const clientTimestamp = Date.now();
+      const timezoneOffsetMinutes = clientNow.getTimezoneOffset();
       const respuesta = await fetch(`${API_BASE_URL}/plantillas/identificar`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -214,7 +217,9 @@ function FaceRecognition() {
           embeddings: payloadEmbeddings,
           id_dispositivo: 1,
           debug: true,
-          muestrasPorRonda: SAMPLE_COUNT
+          muestrasPorRonda: SAMPLE_COUNT,
+          clientTimestamp,
+          timezoneOffsetMinutes
         })
       });
 

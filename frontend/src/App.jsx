@@ -636,17 +636,16 @@ function App() {
           <header className="map-header">
             <div>
               <p className="map-subtitle">Geocerca de verificacion</p>
-              <h2>
-                <TypingAnimation
+              <div className="register-animated-title">
+                <LayoutTextFlip
+                  text="Define la geocerca"
                   words={[
-                    "Define un punto y radio para autorizar marcaciones",
-                    "Solo los empleados en zona podran marcar",
-                    "Configura la geocerca en segundos"
+                    "autoriza marcaciones en zona",
+                    "solo empleados dentro del radio",
+                    "configura el punto en segundos"
                   ]}
-                  loop
-                  className="typing-dark"
                 />
-              </h2>
+              </div>
               <p className="map-description">
                 Elige una ubicacion en el mapa y establece el radio permitido. Solo los empleados dentro de esa zona
                 podran verificarse.

@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { fetchEmployeeLogs } from "../services/logs.js";
-import { TypingAnimation } from "./ui/typing-animation.jsx";
+import LayoutTextFlip from "./ui/layout-text-flip.jsx";
 
 function eventClass(evento) {
   const kind = (evento || "").toUpperCase();
@@ -84,13 +84,12 @@ export default function EmployeeLogs() {
       <header className="register-header">
         <div>
           <p className="register-subtitle">Historial de empleados</p>
-          <h1>
-            <TypingAnimation
-              words={["Inserciones, cambios y eliminaciones", "Todo el historial en un solo lugar"]}
-              loop
-              className="typing-dark"
+          <div className="register-animated-title">
+            <LayoutTextFlip
+              text="Acciones recientes"
+              words={["inserciones, cambios y eliminaciones", "todo el historial en un solo lugar"]}
             />
-          </h1>
+          </div>
           <p className="register-description">
             Revisa las últimas acciones realizadas sobre los empleados. Solo visible para administradores.
           </p>

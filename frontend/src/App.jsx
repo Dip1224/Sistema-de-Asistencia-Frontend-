@@ -241,7 +241,7 @@ function App() {
 
       const response = await originalFetch(input, { ...init, headers });
       const isLoginRequest = typeof input === "string" && input.includes("/auth/login");
-      if (response.status === 401 && !isLoginRequest) {
+      if (response.status === 401 && !isLoginRequest && authInfo?.token) {
         handleSessionExpired();
       }
       return response;

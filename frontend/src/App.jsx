@@ -34,12 +34,6 @@ function decodeTokenExpirationMs(token) {
   }
 }
 
-function isTokenExpired(token) {
-  const expMs = decodeTokenExpirationMs(token);
-  if (!expMs) return false;
-  return Date.now() >= expMs;
-}
-
 function readStoredAuth() {
   try {
     const raw = localStorage.getItem(AUTH_STORAGE_KEY);
@@ -192,13 +186,7 @@ function App() {
   const [credentials, setCredentials] = useState({ username: "", password: "" });
   const [authInfo, setAuthInfo] = useState(() => {
     const stored = readStoredAuth();
-    if (stored?.token && !isTokenExpired(stored.token)) {
-      return stored;
-    }
-    if (stored?.token) {
-      clearStoredAuth();
-    }
-    return null;
+    return stored?.token ? stored : null;
   });
   const [sessionExpired, setSessionExpired] = useState(false);
   const [zone, setZone] = useState({ center: { lat: 0, lng: 0 }, radius: 100, name: "" });
@@ -216,7 +204,7 @@ function App() {
   const navigate = useNavigate();
 
   const isAdmin = isAdminRole(authInfo);
-  const isAuthenticated = Boolean(authInfo?.token) && !isTokenExpired(authInfo.token);
+  const isAuthenticated = Boolean(authInfo?.token);
 
   const handleSessionExpired = useCallback(() => {
     if (sessionHandledRef.current) return;
@@ -234,7 +222,7 @@ function App() {
     if (!expMs) return undefined;
     const msLeft = expMs - Date.now();
     if (msLeft <= 0) {
-      handleSessionExpired();
+      // Si el reloj local esta adelantado, evitamos cerrar sesion de inmediato y dejamos que el backend lo valide.
       return undefined;
     }
     const timerId = setTimeout(() => handleSessionExpired(), msLeft);
@@ -519,6 +507,9 @@ function App() {
 
       if (!response.ok) {
         throw new Error(data?.error || "Credenciales invalidas");
+      }
+      if (!data?.token) {
+        throw new Error("La respuesta de login no incluyó un token de sesion");
       }
 
       setAuthInfo(data);

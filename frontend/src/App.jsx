@@ -240,8 +240,12 @@ function App() {
       }
 
       const response = await originalFetch(input, { ...init, headers });
-      const isLoginRequest = typeof input === "string" && input.includes("/auth/login");
-      if (response.status === 401 && !isLoginRequest && authInfo?.token) {
+      const url = typeof input === "string" ? input : input?.url || "";
+      const isLoginRequest = url.includes("/auth/login");
+      const isFaceIdentify = url.includes("/plantillas/identificar");
+
+      // No expirar sesion cuando la identificacion facial devuelve 401 (caso esperado)
+      if (response.status === 401 && !isLoginRequest && !isFaceIdentify && authInfo?.token) {
         handleSessionExpired();
       }
       return response;

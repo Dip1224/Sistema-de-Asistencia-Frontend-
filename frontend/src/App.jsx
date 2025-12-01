@@ -16,6 +16,7 @@ import VerifyIntro from "./components/VerifyIntro.jsx";
 import LayoutTextFlip from "./components/ui/layout-text-flip.jsx";
 import { TypingAnimation } from "./components/ui/typing-animation.jsx";
 import ProfileCard from "./components/ProfileCard.jsx";
+import EmployeesManager from "./components/EmployeesManager.jsx";
 
 const AUTH_STORAGE_KEY = "sr_auth_info";
 
@@ -293,7 +294,7 @@ function App() {
       setActiveView("home");
       return;
     }
-    const allowedViews = isAdmin ? ["register", "verify", "schedules", "map", "logs", "profile"] : [];
+    const allowedViews = isAdmin ? ["register", "verify", "schedules", "map", "logs", "profile", "employees"] : [];
     const defaultView = isAdmin ? "register" : "verify";
     if (!allowedViews.includes(activeView)) {
       setActiveView(defaultView);
@@ -817,14 +818,18 @@ function App() {
           <VerifyIntro />
           <FaceRecognition />
         </section>
-      );
-    }
+        );
+      }
 
-    return (
-      <section className="schedule-card">
-        <ScheduleManager />
-      </section>
-    );
+      if (activeView === "employees") {
+        return <EmployeesManager />;
+      }
+
+      return (
+        <section className="schedule-card">
+          <ScheduleManager />
+        </section>
+      );
   }
 
   function handleSessionModalClose() {
@@ -919,6 +924,13 @@ function App() {
                         onClick={() => handleMenuAction("schedules")}
                       >
                         Horarios
+                      </button>
+                      <button
+                        type="button"
+                        className={`menu-option ${activeView === "employees" ? "active" : ""}`}
+                        onClick={() => handleMenuAction("employees")}
+                      >
+                        Empleados
                       </button>
                       <button
                         type="button"

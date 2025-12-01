@@ -1798,6 +1798,19 @@ html.dark .profile-value {
   gap: 0.75rem;
 }
 
+.simple-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 0.75rem;
+}
+
+.form-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  align-items: center;
+}
+
 .simple-form label {
   display: flex;
   flex-direction: column;

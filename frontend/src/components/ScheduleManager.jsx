@@ -20,6 +20,7 @@ function ScheduleManager() {
   const [horaSalida, setHoraSalida] = useState("13:00");
   const [tolerancia, setTolerancia] = useState(5);
   const [horarios, setHorarios] = useState([]);
+  const [editingHorarioId, setEditingHorarioId] = useState(null);
   const [loadingHorarios, setLoadingHorarios] = useState(false);
   const [saving, setSaving] = useState(false);
   const [feedback, setFeedback] = useState("");
@@ -41,6 +42,8 @@ function ScheduleManager() {
   useEffect(() => {
     if (!selectedEmployee) {
       setHorarios([]);
+      setEditingHorarioId(null);
+      setSelectedDays(new Set([1, 2, 3, 4, 5]));
       return;
     }
 
@@ -53,6 +56,9 @@ function ScheduleManager() {
           throw new Error(data?.error || "No se pudieron obtener los horarios");
         }
         setHorarios(data?.horarios || []);
+        if (Array.isArray(data?.horarios) && data.horarios.length) {
+          setSelectedDays(new Set(data.horarios.map(h => h.dia_semana)));
+        }
       } catch (err) {
         console.error(err);
         setHorarios([]);
@@ -87,16 +93,22 @@ function ScheduleManager() {
     }
 
     if (!selectedDays.size) {
-      setError("Selecciona al menos un día");
+      setError("Selecciona al menos un dia");
+      return;
+    }
+
+    if (editingHorarioId && selectedDays.size !== 1) {
+      setError("Para editar selecciona solo un dia");
       return;
     }
 
     setSaving(true);
 
     try {
-      for (const dia of selectedDays) {
-        const response = await fetch(`${API_BASE_URL}/horarios/registrar`, {
-          method: "POST",
+      if (editingHorarioId) {
+        const dia = Array.from(selectedDays)[0];
+        const response = await fetch(`${API_BASE_URL}/horarios/${editingHorarioId}`, {
+          method: "PUT",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
             id_empleado: Number(selectedEmployee),
@@ -109,15 +121,37 @@ function ScheduleManager() {
 
         const data = await response.json().catch(() => ({}));
         if (!response.ok) {
-          throw new Error(data?.error || "No se pudo registrar el horario");
+          throw new Error(data?.error || "No se pudo actualizar el horario");
         }
+        setFeedback("Horario actualizado correctamente.");
+        setEditingHorarioId(null);
+      } else {
+        for (const dia of selectedDays) {
+          const response = await fetch(`${API_BASE_URL}/horarios/registrar`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              id_empleado: Number(selectedEmployee),
+              dia_semana: dia,
+              hora_entrada: horaEntrada,
+              hora_salida: horaSalida,
+              tolerancia_minutos: Number(tolerancia)
+            })
+          });
+
+          const data = await response.json().catch(() => ({}));
+          if (!response.ok) {
+            throw new Error(data?.error || "No se pudo registrar el horario");
+          }
+        }
+
+        setFeedback("Horarios registrados correctamente.");
       }
 
-      setFeedback("Horarios registrados correctamente.");
       await refreshHorarios();
     } catch (err) {
       console.error(err);
-      setError(err.message || "Ocurrió un error registrando el horario");
+      setError(err.message || "Ocurrio un error registrando el horario");
     } finally {
       setSaving(false);
     }
@@ -133,6 +167,9 @@ function ScheduleManager() {
         throw new Error();
       }
       setHorarios(data?.horarios || []);
+      if (Array.isArray(data?.horarios) && data.horarios.length) {
+        setSelectedDays(new Set(data.horarios.map(h => h.dia_semana)));
+      }
     } catch (err) {
       console.error(err);
       setHorarios([]);
@@ -154,6 +191,22 @@ function ScheduleManager() {
       console.error(err);
       setError(err.message || "Ocurrió un error eliminando el horario");
     }
+  }
+
+  function startEdit(horario) {
+    setEditingHorarioId(horario.id_horario);
+    setSelectedDays(new Set([horario.dia_semana]));
+    setHoraEntrada(horario.hora_entrada?.slice(0, 5) || "09:00");
+    setHoraSalida(horario.hora_salida?.slice(0, 5) || "13:00");
+    setTolerancia(horario.tolerancia_minutos ?? 0);
+    setFeedback("");
+    setError("");
+  }
+
+  function cancelEdit() {
+    setEditingHorarioId(null);
+    setFeedback("");
+    setError("");
   }
 
   const dayList = useMemo(() => Array.from(selectedDays).sort((a, b) => a - b), [selectedDays]);
@@ -238,13 +291,18 @@ function ScheduleManager() {
 
         {dayList.length > 0 && (
           <p className="schedule-summary">
-            Se registrará el horario para: {dayList.map(value => DAYS.find(d => d.value === value)?.label).join(", ")}
+            {editingHorarioId ? "Se actualizara el horario para:" : "Se registrara el horario para:"} {dayList.map(value => DAYS.find(d => d.value === value)?.label).join(", ")}
           </p>
         )}
 
         <button type="submit" disabled={saving}>
-          {saving ? "Guardando..." : "Guardar horario"}
+          {saving ? "Guardando..." : editingHorarioId ? "Actualizar horario" : "Guardar horario"}
         </button>
+        {editingHorarioId && (
+          <button type="button" className="ghost-button" onClick={cancelEdit} disabled={saving}>
+            Cancelar edicion
+          </button>
+        )}
 
         {feedback && <p className="status success">{feedback}</p>}
         {error && <p className="status error">{error}</p>}
@@ -277,6 +335,13 @@ function ScheduleManager() {
                   <td>{horario.hora_salida?.slice(0, 5)}</td>
                   <td>{horario.tolerancia_minutos}</td>
                   <td>
+                    <button
+                      type="button"
+                      className="ghost-button"
+                      onClick={() => startEdit(horario)}
+                    >
+                      Editar
+                    </button>
                     <button
                       type="button"
                       className="ghost-button ghost-button--danger"

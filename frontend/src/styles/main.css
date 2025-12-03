@@ -34,6 +34,22 @@ body {
   color: #0b0b0b;
 }
 
+@keyframes aurora-shift {
+  0% {
+    transform: translate3d(-10%, -6%, 0) rotate(0deg);
+  }
+  50% {
+    transform: translate3d(8%, 6%, 0) rotate(2deg);
+  }
+  100% {
+    transform: translate3d(-6%, -8%, 0) rotate(-2deg);
+  }
+}
+
+.animate-aurora {
+  animation: aurora-shift 22s ease-in-out infinite alternate;
+}
+
 .sr-only {
   position: absolute;
   width: 1px;

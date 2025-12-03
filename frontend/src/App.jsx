@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef, useState } from "react";
+﻿import { useCallback, useEffect, useRef, useState } from "react";
 import { Routes, Route, Navigate, useNavigate } from "react-router-dom";
 import TestEmployeeUpload from "./components/TestEmployeeUpload.jsx";
 import FaceRecognition from "./components/FaceRecognition.jsx";
@@ -113,8 +113,8 @@ function HomePage({ onEnterApp, onLogin, onGoHome }) {
           </div>
 
           <div className="home-video">
-            <h3>Así funciona</h3>
-            <p>Reproduce un breve video de la experiencia de registro y verificación.</p>
+            <h3>AsÃ­ funciona</h3>
+            <p>Reproduce un breve video de la experiencia de registro y verificaciÃ³n.</p>
             <HeroVideoDialog
               animationStyle="from-center"
               videoSrc="https://www.youtube.com/embed/bIVIEZNsa_I?si=bMn8WHcfcplVEpR6"
@@ -154,11 +154,11 @@ function LoginPage({ onSubmit, credentials, setCredentials, loginError, loginLoa
             />
           </label>
           <label>
-            Contraseña
+            Contrasena
             <input
               type="password"
               name="password"
-              placeholder="Contraseña"
+              placeholder="Contrasena"
               value={credentials.password}
               onChange={event => setCredentials(prev => ({ ...prev, password: event.target.value }))}
               required
@@ -170,7 +170,7 @@ function LoginPage({ onSubmit, credentials, setCredentials, loginError, loginLoa
             {loginLoading ? "Validando..." : "Entrar"}
           </button>
           <small className="login-hint">
-            Demo: <code>admin</code> / <code>1234</code>
+            Demo: <code>admin</code> / <code>123456</code>
           </small>
         </form>
       </div>
@@ -420,7 +420,7 @@ function App() {
     let targetBranchId = selectedBranchId;
     let targetZoneName = zoneName.trim();
 
-    // Si no hay sucursal seleccionada pero el usuario escribió una nueva, la creamos al vuelo
+    // Si no hay sucursal seleccionada pero el usuario escribiÃ³ una nueva, la creamos al vuelo
     if (!targetBranchId) {
       if (!newBranch.name.trim()) {
         alert("Selecciona una sucursal o crea una nueva para guardar la zona");
@@ -445,7 +445,7 @@ function App() {
       }
     }
 
-    // Si no escribió nombre de zona, usamos uno por defecto
+    // Si no escribiÃ³ nombre de zona, usamos uno por defecto
     if (!targetZoneName) {
       targetZoneName = newBranch.name.trim()
         ? `${newBranch.name.trim()} - zona`
@@ -508,7 +508,7 @@ function App() {
 
     const branch = branches.find(b => String(b.id) === String(selectedBranchId));
     const name = branch?.name || selectedBranchId;
-    if (!window.confirm(`¿Eliminar la sucursal "${name}" y sus zonas asociadas?`)) {
+    if (!window.confirm(`Â¿Eliminar la sucursal "${name}" y sus zonas asociadas?`)) {
       return;
     }
 
@@ -551,7 +551,7 @@ function App() {
         throw new Error(data?.error || "Credenciales invalidas");
       }
       if (!data?.token) {
-        throw new Error("La respuesta de login no incluyó un token de sesion");
+        throw new Error("La respuesta de login no incluyÃ³ un token de sesion");
       }
 
       setAuthInfo(data);
@@ -985,7 +985,7 @@ function App() {
                       <header className="register-header">
                         <p className="register-subtitle">Acceso restringido</p>
                         <h1>Solo administradores pueden usar este panel</h1>
-                        <p className="register-description">Cierra sesión e ingresa con una cuenta de administrador.</p>
+                        <p className="register-description">Cierra sesiÃ³n e ingresa con una cuenta de administrador.</p>
                       </header>
                     </section>
                   </main>
@@ -1016,3 +1016,8 @@ function App() {
 }
 
 export default App;
+
+
+
+
+

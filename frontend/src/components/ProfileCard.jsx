@@ -1,5 +1,6 @@
-import React, { useState } from "react";
+import React, { useMemo, useState } from "react";
 import API_BASE_URL from "../config/api.js";
+import { AnimatedList } from "./ui/animated-list.jsx";
 
 function buildAvatar({ nombre, apellido, username }) {
   const initials = [nombre, apellido].filter(Boolean).map(word => word[0]).join("") || (username ? username[0] : "?");
@@ -21,6 +22,12 @@ function ProfileCard({ user }) {
   const fotoUrl =
     user?.foto || user?.ruta_imagen || user?.foto_url || user?.imagen || user?.avatar || user?.rutaImagen || null;
   const avatarFallback = buildAvatar({ nombre, apellido, username });
+  const alerts = useMemo(() => {
+    const list = [];
+    if (status) list.push({ key: "status", type: "success", message: status });
+    if (error) list.push({ key: "error", type: "error", message: error });
+    return list;
+  }, [status, error]);
 
   async function handlePasswordChange(event) {
     event.preventDefault();
@@ -145,8 +152,13 @@ function ProfileCard({ user }) {
               required
             />
           </label>
-          {status && <p className="status success">{status}</p>}
-          {error && <p className="status error">{error}</p>}
+          <AnimatedList className="profile-alerts" delay={1200}>
+            {alerts.map(alert => (
+              <p key={alert.key} className={`status ${alert.type === "success" ? "success" : "error"}`}>
+                {alert.message}
+              </p>
+            ))}
+          </AnimatedList>
           <button type="submit" className="primary-btn" disabled={saving}>
             {saving ? "Actualizando..." : "Guardar nueva contraseña"}
           </button>

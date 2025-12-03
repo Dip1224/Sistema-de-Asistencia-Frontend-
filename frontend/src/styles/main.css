@@ -1713,6 +1713,10 @@ html.dark .schedule-table button {
   justify-self: flex-start;
 }
 
+.profile-alerts {
+  width: 100%;
+}
+
 html.dark .profile-card {
   background: #111112;
   color: #f5f5f5;

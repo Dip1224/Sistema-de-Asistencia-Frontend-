@@ -119,8 +119,8 @@ function HomePage({ onEnterApp, onLogin, onGoHome }) {
             <HeroVideoDialog
               animationStyle="from-center"
               videoSrc="https://www.youtube.com/embed/bIVIEZNsa_I?si=bMn8WHcfcplVEpR6"
-              thumbnailSrc="/hero-cover-dark.jpg"
-              darkThumbnailSrc="/hero-cover-dark.jpg"
+              thumbnailSrc="/portada.png"
+              darkThumbnailSrc="/portada.png"
               thumbnailAlt="Demo de reconocimiento"
             />
           </div>

@@ -1666,6 +1666,53 @@ html.dark .schedule-table button {
   color: #0b0b0b;
 }
 
+.profile-security {
+  margin-top: 0.5rem;
+  border: 1px solid #e5e7eb;
+  border-radius: 1rem;
+  padding: 1.1rem;
+  background: #f8fafc;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.profile-security h3 {
+  margin: 0.15rem 0;
+}
+
+.profile-password-form {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 0.75rem;
+}
+
+.profile-password-form label {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+  font-weight: 700;
+  color: #0f172a;
+}
+
+.profile-password-form input {
+  border: 1px solid #d4d4d8;
+  border-radius: 0.65rem;
+  padding: 0.6rem 0.75rem;
+  background: #fff;
+  font-size: 0.95rem;
+}
+
+.profile-password-form input:focus {
+  outline: none;
+  border-color: #0f172a;
+  box-shadow: 0 0 0 3px rgba(15, 23, 42, 0.1);
+}
+
+.profile-password-form .primary-btn {
+  justify-self: flex-start;
+}
+
 html.dark .profile-card {
   background: #111112;
   color: #f5f5f5;
@@ -1683,6 +1730,21 @@ html.dark .profile-label {
 }
 
 html.dark .profile-value {
+  color: #f5f5f5;
+}
+
+html.dark .profile-security {
+  background: #0f172a;
+  border-color: #1f2937;
+}
+
+html.dark .profile-password-form label {
+  color: #e5e7eb;
+}
+
+html.dark .profile-password-form input {
+  background: #0b0b0b;
+  border-color: #1f1f1f;
   color: #f5f5f5;
 }
 

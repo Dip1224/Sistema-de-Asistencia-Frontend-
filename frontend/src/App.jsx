@@ -113,8 +113,8 @@ function HomePage({ onEnterApp, onLogin, onGoHome }) {
           </div>
 
           <div className="home-video">
-            <h3>AsÃ­ funciona</h3>
-            <p>Reproduce un breve video de la experiencia de registro y verificaciÃ³n.</p>
+            <h3>Asi funciona</h3>
+            <p>Reproduce un breve video de la experiencia de registro y verificacion.</p>
             <HeroVideoDialog
               animationStyle="from-center"
               videoSrc="https://www.youtube.com/embed/bIVIEZNsa_I?si=bMn8WHcfcplVEpR6"
@@ -1016,6 +1016,8 @@ function App() {
 }
 
 export default App;
+
+
 
 
 

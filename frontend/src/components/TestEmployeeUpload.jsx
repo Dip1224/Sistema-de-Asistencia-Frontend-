@@ -4,8 +4,8 @@ import { acquireSharedCamera, releaseSharedCamera, buildCameraConstraints } from
 import API_BASE_URL from "../config/api.js";
 import { fetchRoles } from "../services/roles.js";
 import { fetchDepartamentos } from "../services/departamentos.js";
-import { FileUpload } from "./ui/file-upload.jsx";
 import { NativeSelect, NativeSelectOption } from "./ui/native-select.jsx";
+import FileUploadDemo from "./FileUploadDemo.jsx";
 
 const CAMERA_OPTIONS = [
   { value: "front", label: "Camara frontal / selfie" },
@@ -59,6 +59,7 @@ function TestEmployeeUpload() {
   const streamRef = useRef(null);
   const fileInputRef = useRef(null);
   const mountedRef = useRef(false);
+  const datePickerRef = useRef(null);
   const isAdminSelected = Number(idRol) === 1;
 
   useEffect(() => {
@@ -473,6 +474,27 @@ function TestEmployeeUpload() {
     }
   }, [fechaIngreso]);
 
+  useEffect(() => {
+    if (!showDatePicker) return undefined;
+    const handleClickOutside = event => {
+      if (datePickerRef.current?.contains(event.target)) return;
+      setShowDatePicker(false);
+    };
+    const handleKeyDown = event => {
+      if (event.key === "Escape") {
+        setShowDatePicker(false);
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    document.addEventListener("touchstart", handleClickOutside);
+    document.addEventListener("keydown", handleKeyDown);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+      document.removeEventListener("touchstart", handleClickOutside);
+      document.removeEventListener("keydown", handleKeyDown);
+    };
+  }, [showDatePicker]);
+
   return (
     <section className="test-upload">
       <h2>Registrar empleado + plantilla facial</h2>
@@ -569,7 +591,7 @@ function TestEmployeeUpload() {
         </NativeSelect>
         <label>
           Fecha de ingreso
-          <div className="date-field">
+          <div className="date-field" ref={datePickerRef}>
             <input
               type="text"
               readOnly
@@ -621,9 +643,9 @@ function TestEmployeeUpload() {
           </div>
         </label>
         <div className="upload-wrapper">
-          <FileUpload
-            onChange={fileList => {
-              const first = Array.isArray(fileList) ? fileList[0] : null;
+          <FileUploadDemo
+            onChange={files => {
+              const first = Array.isArray(files) ? files[0] : null;
               setFileFromUpload(first || null);
             }}
           />

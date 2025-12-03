@@ -99,12 +99,14 @@ function SmoothCursor({
       });
     }
 
+    document.documentElement.classList.add("custom-cursor-active");
     document.body.style.cursor = "none";
     window.addEventListener("mousemove", throttledMouseMove);
 
     return () => {
       window.removeEventListener("mousemove", throttledMouseMove);
       document.body.style.cursor = "auto";
+      document.documentElement.classList.remove("custom-cursor-active");
       if (rafId) cancelAnimationFrame(rafId);
       if (timeoutRef.current) clearTimeout(timeoutRef.current);
     };

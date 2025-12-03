@@ -23,6 +23,10 @@ textarea {
   box-sizing: border-box;
 }
 
+.custom-cursor-active * {
+  cursor: none !important;
+}
+
 body {
   margin: 0;
   min-height: 100vh;
@@ -60,19 +64,30 @@ body {
 
 .auth-panel {
   width: min(480px, 92vw);
-  background: #0f0f10;
-  border: 1px solid #1f1f1f;
+  background: #ffffff;
+  border: 1px solid #e5e7eb;
   border-radius: 1.25rem;
   padding: 1.75rem;
   display: flex;
   flex-direction: column;
   gap: 1.25rem;
   box-shadow: 0 20px 50px rgba(0, 0, 0, 0.35);
-  color: #f5f5f5;
+  color: #0b0b0b;
+}
+
+.auth-panel .eyebrow {
+  background: #eef2ff;
+  border: 1px solid #e0e7ff;
+  color: #312e81;
 }
 
 .auth-hero h1 {
   margin: 0.2rem 0;
+  color: #0f172a;
+}
+
+.auth-hero .hero-lead {
+  color: #475569;
 }
 
 .auth-form {
@@ -89,11 +104,17 @@ body {
 }
 
 .auth-form input {
-  border: 1px solid #1f1f1f;
+  border: 1px solid #d4d4d8;
   border-radius: 0.75rem;
   padding: 0.7rem 0.85rem;
-  background: #0b0b0b;
-  color: #f5f5f5;
+  background: #f8fafc;
+  color: #0b0b0b;
+}
+
+.auth-form input:focus {
+  outline: none;
+  border-color: #0f172a;
+  box-shadow: 0 0 0 3px rgba(15, 23, 42, 0.12);
 }
 
 .auth-form .primary {
@@ -102,8 +123,8 @@ body {
   border: none;
   border-radius: 0.9rem;
   padding: 0.85rem;
-  background: #f5f5f5;
-  color: #0b0b0b;
+  background: #0f172a;
+  color: #f5f5f5;
   font-weight: 800;
   cursor: pointer;
 }
@@ -357,8 +378,10 @@ body {
 
 .login-hint code {
   background: #e5e7eb;
+  color: #0b0b0b;
   padding: 0.1rem 0.35rem;
   border-radius: 0.35rem;
+  border: 1px solid #d4d4d8;
 }
 
 .home-screen {
@@ -535,7 +558,7 @@ body {
 
 .typing-animation {
   display: inline-flex;
-  align-items: center;
+  align-items: baseline;
   gap: 0.35rem;
   font-weight: 800;
   color: #e2e8f0;
@@ -547,10 +570,11 @@ body {
 
 .typing-animation__caret {
   width: 10px;
-  height: 1.1em;
+  height: 1em;
   background: #f5f5f5;
   border-radius: 2px;
   display: inline-block;
+  align-self: baseline;
   animation: caretBlink 1s steps(2, start) infinite;
 }
 
@@ -855,6 +879,27 @@ html.dark .menu-option.login-option {
   border-color: #e5e5e5;
 }
 
+html.dark .auth-shell {
+  background: radial-gradient(circle, #0f172a 0%, #0b0b0b 90%);
+}
+
+html.dark .auth-panel {
+  background: #0f0f10;
+  border: 1px solid #1f1f1f;
+  color: #f5f5f5;
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.35);
+}
+
+html.dark .auth-form label {
+  color: #f5f5f5;
+}
+
+html.dark .auth-form input {
+  background: #0b0b0b;
+  border-color: #1f1f1f;
+  color: #f5f5f5;
+}
+
 html.dark .theme-toggle {
   background: #0b0b0b;
   border-color: #1f1f1f;
@@ -901,6 +946,12 @@ html.dark .register-subtitle,
 html.dark .login-hint,
 html.dark .status {
   color: #d1d5db;
+}
+
+html.dark .login-hint code {
+  background: #111827;
+  color: #f8fafc;
+  border-color: #1f2937;
 }
 
 html.dark .map-subtitle,
@@ -2167,6 +2218,22 @@ html.dark .upload-icon {
   background: #111827;
   color: #f5f5f5;
   border-color: #111827;
+}
+
+.file-upload-demo {
+  width: 100%;
+  max-width: 920px;
+  min-height: 12rem;
+  margin: 0 auto;
+  border: 1px dashed #e5e7eb;
+  border-radius: 0.9rem;
+  background: #ffffff;
+  padding: 0.35rem;
+}
+
+html.dark .file-upload-demo {
+  background: #0b0b0b;
+  border-color: #1f2937;
 }
 
 @media (max-width: 480px) {

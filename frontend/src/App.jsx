@@ -14,7 +14,7 @@ import EmployeeSchedule from "./components/EmployeeSchedule.jsx";
 import EmployeeLogs from "./components/EmployeeLogs.jsx";
 import VerifyIntro from "./components/VerifyIntro.jsx";
 import LayoutTextFlip from "./components/ui/layout-text-flip.jsx";
-import { TypingAnimation } from "./components/ui/typing-animation.jsx";
+import TypewriterTitle from "./components/ui/typewriter-title.jsx";
 import ProfileCard from "./components/ProfileCard.jsx";
 import EmployeesManager from "./components/EmployeesManager.jsx";
 
@@ -92,13 +92,12 @@ function HomePage({ onEnterApp, onLogin, onGoHome }) {
               <p className="eyebrow">Control de asistencia con biometria facial</p>
               <h1 className="hero-title">
                 <span className="typing-static">Bienvenido al panel</span>
-                <TypingAnimation
-                  words={[
-                    "Sistema de Reconocimiento",
-                    "Marca tu entrada en segundos",
-                    "Marca tu salida sin esperas"
+                <TypewriterTitle
+                  sequences={[
+                    { text: "Sistema de Reconocimiento", deleteAfter: true },
+                    { text: "Marca tu entrada en segundos", deleteAfter: true },
+                    { text: "Marca tu salida sin esperas", deleteAfter: true }
                   ]}
-                  loop
                 />
               </h1>
               <p className="hero-lead">
@@ -204,6 +203,13 @@ function App() {
   const sessionHandledRef = useRef(false);
   const originalFetchRef = useRef(window.fetch);
   const navigate = useNavigate();
+
+  useEffect(() => {
+    const stored = localStorage.getItem("theme");
+    const prefersDark = window.matchMedia?.("(prefers-color-scheme: dark)")?.matches;
+    const initial = stored ? stored === "dark" : prefersDark;
+    document.documentElement.classList.toggle("dark", initial);
+  }, []);
 
   const isAdmin = isAdminRole(authInfo);
   const isAuthenticated = Boolean(authInfo?.token);
@@ -596,13 +602,12 @@ function App() {
               <p className="eyebrow">Control de asistencia con biometria facial</p>
               <h1 className="hero-title">
                 <span className="typing-static">Bienvenido al panel</span>
-                <TypingAnimation
-                  words={[
-                    "Sistema de Reconocimiento",
-                    "Marca tu entrada en segundos",
-                    "Marca tu salida sin esperas"
+                <TypewriterTitle
+                  sequences={[
+                    { text: "Sistema de Reconocimiento", deleteAfter: true },
+                    { text: "Marca tu entrada en segundos", deleteAfter: true },
+                    { text: "Marca tu salida sin esperas", deleteAfter: true }
                   ]}
-                  loop
                 />
               </h1>
               <p className="hero-lead">

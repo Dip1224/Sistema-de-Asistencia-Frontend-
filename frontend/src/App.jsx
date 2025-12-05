@@ -117,7 +117,7 @@ function HomePage({ onEnterApp, onLogin, onGoHome }) {
             <p>Reproduce un breve video de la experiencia de registro y verificacion.</p>
             <HeroVideoDialog
               animationStyle="from-center"
-              videoSrc="https://www.youtube.com/embed/bIVIEZNsa_I?si=bMn8WHcfcplVEpR6"
+              videoSrc="https://www.youtube.com/embed/eB9uNiQig1k"
               thumbnailSrc="/portada.png"
               darkThumbnailSrc="/portada.png"
               thumbnailAlt="Demo de reconocimiento"
